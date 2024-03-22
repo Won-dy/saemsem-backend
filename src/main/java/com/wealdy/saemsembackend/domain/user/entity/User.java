@@ -11,11 +11,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(uniqueConstraints = {
     @UniqueConstraint(name = "unique_user_login_id", columnNames = {"loginId"}),
     @UniqueConstraint(name = "unique_user_nickname", columnNames = {"nickname"})
@@ -45,4 +49,8 @@ public class User {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(nullable = false)
     private LocalDateTime createdAt;  // 생성일시
+
+    public static User createUser(String loginId, String password, String nickname) {
+        return new User(null, loginId, password, nickname, YnColumn.N, null);
+    }
 }
