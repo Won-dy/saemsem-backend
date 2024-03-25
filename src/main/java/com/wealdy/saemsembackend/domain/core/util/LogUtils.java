@@ -1,4 +1,4 @@
-package com.wealdy.saemsembackend.common.util;
+package com.wealdy.saemsembackend.domain.core.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 

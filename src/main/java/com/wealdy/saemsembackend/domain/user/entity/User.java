@@ -1,6 +1,6 @@
 package com.wealdy.saemsembackend.domain.user.entity;
 
-import com.wealdy.saemsembackend.common.enums.YnColumn;
+import com.wealdy.saemsembackend.domain.core.enums.YnColumn;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

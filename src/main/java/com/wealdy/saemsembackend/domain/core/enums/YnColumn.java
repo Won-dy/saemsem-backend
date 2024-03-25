@@ -1,4 +1,4 @@
-package com.wealdy.saemsembackend.common.enums;
+package com.wealdy.saemsembackend.domain.core.enums;
 
 import lombok.Getter;
 

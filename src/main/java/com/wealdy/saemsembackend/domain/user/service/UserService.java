@@ -1,8 +1,8 @@
 package com.wealdy.saemsembackend.domain.user.service;
 
-import com.wealdy.saemsembackend.common.exception.AlreadyExistException;
-import com.wealdy.saemsembackend.common.response.IdResponseDto;
-import com.wealdy.saemsembackend.common.response.ResponseCode;
+import com.wealdy.saemsembackend.domain.core.exception.AlreadyExistException;
+import com.wealdy.saemsembackend.domain.core.response.IdResponseDto;
+import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
 import com.wealdy.saemsembackend.domain.user.dto.UserDto;
 import com.wealdy.saemsembackend.domain.user.entity.User;
 import com.wealdy.saemsembackend.domain.user.repository.UserRepository;

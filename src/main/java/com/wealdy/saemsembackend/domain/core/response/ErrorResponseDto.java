@@ -1,10 +1,11 @@
-package com.wealdy.saemsembackend.common.response;
+package com.wealdy.saemsembackend.domain.core.response;
 
-import com.wealdy.saemsembackend.common.exception.ExceptionBase;
+import com.wealdy.saemsembackend.domain.core.exception.ExceptionBase;
 import lombok.Getter;
 
 @Getter
 public class ErrorResponseDto {
+
     private boolean error;
     private int http_status_code;
     private int error_code;

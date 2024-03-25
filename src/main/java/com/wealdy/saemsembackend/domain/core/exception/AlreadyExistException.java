@@ -1,6 +1,6 @@
-package com.wealdy.saemsembackend.common.exception;
+package com.wealdy.saemsembackend.domain.core.exception;
 
-import com.wealdy.saemsembackend.common.response.ResponseCode;
+import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 

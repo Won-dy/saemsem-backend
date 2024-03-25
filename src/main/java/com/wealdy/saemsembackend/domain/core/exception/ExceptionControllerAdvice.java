@@ -1,8 +1,8 @@
-package com.wealdy.saemsembackend.common.exception;
+package com.wealdy.saemsembackend.domain.core.exception;
 
-import com.wealdy.saemsembackend.common.response.ErrorResponseDto;
-import com.wealdy.saemsembackend.common.response.ResponseCode;
-import com.wealdy.saemsembackend.common.util.LogUtils;
+import com.wealdy.saemsembackend.domain.core.response.ErrorResponseDto;
+import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
+import com.wealdy.saemsembackend.domain.core.util.LogUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.springframework.validation.FieldError;

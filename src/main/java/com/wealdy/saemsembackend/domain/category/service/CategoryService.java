@@ -1,6 +1,6 @@
 package com.wealdy.saemsembackend.domain.category.service;
 
-import com.wealdy.saemsembackend.common.response.ListResponseDto;
+import com.wealdy.saemsembackend.domain.core.response.ListResponseDto;
 import com.wealdy.saemsembackend.domain.category.dto.CategoryDto.GetList;
 import com.wealdy.saemsembackend.domain.category.repository.CategoryRepository;
 import java.util.List;

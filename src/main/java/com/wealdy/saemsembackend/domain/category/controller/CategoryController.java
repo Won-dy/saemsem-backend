@@ -1,7 +1,7 @@
 package com.wealdy.saemsembackend.domain.category.controller;
 
-import com.wealdy.saemsembackend.common.response.ListResponseDto;
-import com.wealdy.saemsembackend.common.response.Response;
+import com.wealdy.saemsembackend.domain.core.response.ListResponseDto;
+import com.wealdy.saemsembackend.domain.core.response.Response;
 import com.wealdy.saemsembackend.domain.category.dto.CategoryDto;
 import com.wealdy.saemsembackend.domain.category.service.CategoryService;
 import java.util.concurrent.Callable;

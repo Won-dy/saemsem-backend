@@ -1,7 +1,7 @@
 package com.wealdy.saemsembackend.domain.user.controller;
 
-import com.wealdy.saemsembackend.common.response.IdResponseDto;
-import com.wealdy.saemsembackend.common.response.Response;
+import com.wealdy.saemsembackend.domain.core.response.IdResponseDto;
+import com.wealdy.saemsembackend.domain.core.response.Response;
 import com.wealdy.saemsembackend.domain.user.dto.UserDto;
 import com.wealdy.saemsembackend.domain.user.service.UserService;
 import jakarta.validation.Valid;

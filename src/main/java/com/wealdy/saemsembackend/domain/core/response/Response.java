@@ -1,4 +1,4 @@
-package com.wealdy.saemsembackend.common.response;
+package com.wealdy.saemsembackend.domain.core.response;
 
 import lombok.Getter;
 

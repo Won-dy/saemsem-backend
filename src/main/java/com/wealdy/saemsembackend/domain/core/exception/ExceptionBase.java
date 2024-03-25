@@ -1,4 +1,4 @@
-package com.wealdy.saemsembackend.common.exception;
+package com.wealdy.saemsembackend.domain.core.exception;
 
 import lombok.Getter;
 
