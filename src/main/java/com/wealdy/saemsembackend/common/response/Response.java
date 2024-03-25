@@ -12,7 +12,7 @@ public class Response<T> {
 
     public Response(T result) {
         this.success = true;
-        this.code = 2000;
+        this.code = ResponseCode.SUCCESS.getCode();
         this.http_status_code = 200;
         this.result = result;
     }
