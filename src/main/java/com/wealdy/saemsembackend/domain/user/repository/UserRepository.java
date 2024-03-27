@@ -27,4 +27,11 @@ public class UserRepository {
             .setParameter("nickname", nickname)
             .getResultList();
     }
+
+    public List<User> findByLoginIdAndPassword(String id, String password) {
+        return em.createQuery("select u from User u where u.loginId = :id and u.password = :password", User.class)
+            .setParameter("id", id)
+            .setParameter("password", password)
+            .getResultList();
+    }
 }

@@ -1,8 +1,10 @@
 package com.wealdy.saemsembackend.domain.user.service;
 
 import com.wealdy.saemsembackend.domain.core.exception.AlreadyExistException;
+import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
 import com.wealdy.saemsembackend.domain.core.response.IdResponseDto;
 import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
+import com.wealdy.saemsembackend.domain.core.util.JWTUtil;
 import com.wealdy.saemsembackend.domain.user.dto.UserDto;
 import com.wealdy.saemsembackend.domain.user.entity.User;
 import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
@@ -16,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    private final JWTUtil jwtUtil;
 
     @Transactional
     public IdResponseDto join(UserDto.Create user) {
@@ -39,5 +43,16 @@ public class UserService {
         if (!findUsers.isEmpty()) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST_NICKNAME);
         }
+    }
+
+    public UserDto.LoginResponse login(UserDto.LoginRequest loginRequest) {
+        List<User> loginUser = userRepository.findByLoginIdAndPassword(loginRequest.getLoginId(), loginRequest.getPassword());
+        if (loginUser.isEmpty()) {
+            throw new NotFoundException(ResponseCode.NOT_FOUND_USER);
+        }
+
+        Long userId = loginUser.getFirst().getId();
+        String accessToken = jwtUtil.createAccessToken(userId);
+        return new UserDto.LoginResponse(userId, accessToken);
     }
 }

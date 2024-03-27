@@ -24,4 +24,12 @@ public class UserController {
     public Callable<Response<IdResponseDto>> join(@Valid @RequestBody UserDto.Create request) {
         return () -> Response.of(userService.join(request));
     }
+
+    /**
+     * 로그인 API
+     */
+    @PostMapping("/login")
+    public Callable<Response<UserDto.LoginResponse>> login(@Valid @RequestBody UserDto.LoginRequest request) {
+        return () -> Response.of(userService.login(request));
+    }
 }
