@@ -16,6 +16,10 @@ public enum ResponseCode {
     ALREADY_EXIST_ID(2000, "이미 존재하는 아이디입니다."),
     ALREADY_EXIST_NICKNAME(2001, "이미 존재하는 닉네임입니다."),
 
+    // Http Status Code 401
+    INVALID_TOKEN(3000, "유효하지 않은 토큰입니다."),
+    EXPIRED_TOKEN(3001, "만료된 토큰입니다."),
+
     // Http Status Code 404
     NOT_FOUND_USER(4001, "존재하지 않는 회원입니다."),
 
