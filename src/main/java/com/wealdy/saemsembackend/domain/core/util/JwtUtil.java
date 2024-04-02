@@ -7,7 +7,6 @@ import static com.wealdy.saemsembackend.domain.core.Constant.USER_ID_KEY;
 import com.wealdy.saemsembackend.domain.core.dto.auth.JWTDto;
 import com.wealdy.saemsembackend.domain.core.exception.ExpiredTokenException;
 import com.wealdy.saemsembackend.domain.core.exception.InvalidTokenException;
-import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -17,7 +16,7 @@ import io.jsonwebtoken.security.Keys;
 import java.util.Date;
 import javax.crypto.SecretKey;
 
-public class JWTUtil {
+public class JwtUtil {
 
     private final static String secret = "djtyS5dopy5dfNt9dfgPmwch5d6klsg0sdlk1kYDgp";
 

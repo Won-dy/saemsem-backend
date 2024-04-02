@@ -4,7 +4,7 @@ import com.wealdy.saemsembackend.domain.core.exception.AlreadyExistException;
 import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
 import com.wealdy.saemsembackend.domain.core.response.IdResponseDto;
 import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
-import com.wealdy.saemsembackend.domain.core.util.JWTUtil;
+import com.wealdy.saemsembackend.domain.core.util.JwtUtil;
 import com.wealdy.saemsembackend.domain.user.dto.UserDto;
 import com.wealdy.saemsembackend.domain.user.entity.User;
 import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
@@ -49,7 +49,7 @@ public class UserService {
             throw new NotFoundException(ResponseCode.NOT_FOUND_USER);
         }
 
-        JWTUtil jwtUtil = new JWTUtil();
+        JwtUtil jwtUtil = new JwtUtil();
         Long userId = loginUser.get(0).getId();
         String accessToken = jwtUtil.createAccessToken(userId);
         return new UserDto.LoginResponse(userId, accessToken);

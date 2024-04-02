@@ -5,8 +5,7 @@ import static com.wealdy.saemsembackend.domain.core.Constant.USER_ID_KEY;
 
 import com.wealdy.saemsembackend.domain.core.dto.auth.JWTDto;
 import com.wealdy.saemsembackend.domain.core.exception.InvalidTokenException;
-import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
-import com.wealdy.saemsembackend.domain.core.util.JWTUtil;
+import com.wealdy.saemsembackend.domain.core.util.JwtUtil;
 import com.wealdy.saemsembackend.domain.core.util.LogUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +25,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        JWTUtil jwtUtil = new JWTUtil();
+        JwtUtil jwtUtil = new JwtUtil();
         JWTDto jwt = jwtUtil.parseToken(getTokenFromHeader(request));
         request.setAttribute(USER_ID_KEY, jwt.getUserId());
 
