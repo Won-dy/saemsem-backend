@@ -1,6 +1,5 @@
 package com.wealdy.saemsembackend.domain.core.interceptor;
 
-import static com.wealdy.saemsembackend.domain.core.Constant.AUTHORIZATION;
 import static com.wealdy.saemsembackend.domain.core.Constant.USER_ID_KEY;
 
 import com.wealdy.saemsembackend.domain.core.dto.auth.JWTDto;
@@ -9,6 +8,7 @@ import com.wealdy.saemsembackend.domain.core.util.JwtUtil;
 import com.wealdy.saemsembackend.domain.core.util.LogUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -33,7 +33,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     private String getTokenFromHeader(HttpServletRequest request) {
-        String tokenString = request.getHeader(AUTHORIZATION);
+        String tokenString = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (StringUtils.hasText(tokenString)) {
             return tokenString;

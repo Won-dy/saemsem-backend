@@ -1,7 +1,5 @@
 package com.wealdy.saemsembackend.domain.core.util;
 
-import static com.wealdy.saemsembackend.domain.core.Constant.ACCESS_TOKEN_EXPIRATION;
-import static com.wealdy.saemsembackend.domain.core.Constant.PREFIX_BEARER;
 import static com.wealdy.saemsembackend.domain.core.Constant.USER_ID_KEY;
 
 import com.wealdy.saemsembackend.domain.core.dto.auth.JWTDto;
@@ -19,6 +17,8 @@ import javax.crypto.SecretKey;
 public class JwtUtil {
 
     private final static String secret = "djtyS5dopy5dfNt9dfgPmwch5d6klsg0sdlk1kYDgp";
+    private final static String PREFIX_BEARER = "Bearer ";
+    private final static int ACCESS_TOKEN_EXPIRATION = 86400;  // 1 DAY
 
     public String createAccessToken(long userId) {
         return createToken(userId, ACCESS_TOKEN_EXPIRATION);
