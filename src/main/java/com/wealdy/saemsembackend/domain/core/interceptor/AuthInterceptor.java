@@ -10,17 +10,13 @@ import com.wealdy.saemsembackend.domain.core.util.JWTUtil;
 import com.wealdy.saemsembackend.domain.core.util.LogUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
-@RequiredArgsConstructor
 public class AuthInterceptor implements HandlerInterceptor {
-
-    private final JWTUtil jwtUtil;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -30,6 +26,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
+        JWTUtil jwtUtil = new JWTUtil();
         JWTDto jwt = jwtUtil.parseToken(getTokenFromHeader(request));
         request.setAttribute(USER_ID_KEY, jwt.getUserId());
 

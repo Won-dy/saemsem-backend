@@ -19,8 +19,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final JWTUtil jwtUtil;
-
     @Transactional
     public IdResponseDto join(UserDto.Create user) {
         validateDuplicateId(user.getLoginId());
@@ -51,6 +49,7 @@ public class UserService {
             throw new NotFoundException(ResponseCode.NOT_FOUND_USER);
         }
 
+        JWTUtil jwtUtil = new JWTUtil();
         Long userId = loginUser.get(0).getId();
         String accessToken = jwtUtil.createAccessToken(userId);
         return new UserDto.LoginResponse(userId, accessToken);

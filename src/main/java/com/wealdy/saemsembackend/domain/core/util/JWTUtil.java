@@ -16,14 +16,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
 import javax.crypto.SecretKey;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-@Component
 public class JWTUtil {
 
-    @Value("${jwt.secret}")
-    private String secret;
+    private final static String secret = "djtyS5dopy5dfNt9dfgPmwch5d6klsg0sdlk1kYDgp";
 
     public String createAccessToken(long userId) {
         return createToken(userId, ACCESS_TOKEN_EXPIRATION);
