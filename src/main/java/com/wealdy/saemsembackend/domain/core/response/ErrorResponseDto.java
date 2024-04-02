@@ -7,21 +7,21 @@ import lombok.Getter;
 public class ErrorResponseDto {
 
     private boolean error;
-    private int http_status_code;
-    private int error_code;
-    private String error_message;
+    private int httpStatusCode;
+    private int errorCode;
+    private String errorMessage;
 
     public ErrorResponseDto(ExceptionBase exception) {
         this.error = true;
-        this.http_status_code = exception.getStatusCode();
-        this.error_code = exception.getCode();
-        this.error_message = exception.getMessage();
+        this.httpStatusCode = exception.getStatusCode();
+        this.errorCode = exception.getCode();
+        this.errorMessage = exception.getMessage();
     }
 
-    public ErrorResponseDto(int http_status_code, int error_code, String error_message) {
+    public ErrorResponseDto(int httpStatusCode, int errorCode, String errorMessage) {
         this.error = true;
-        this.http_status_code = http_status_code;
-        this.error_code = error_code;
-        this.error_message = error_message;
+        this.httpStatusCode = httpStatusCode;
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
     }
 }

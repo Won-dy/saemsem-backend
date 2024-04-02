@@ -7,13 +7,13 @@ public class Response<T> {
 
     private boolean success;
     private int code;
-    private int http_status_code;
+    private int httpStatusCode;
     private T result;
 
     public Response(T result) {
         this.success = true;
         this.code = ResponseCode.SUCCESS.getCode();
-        this.http_status_code = 200;
+        this.httpStatusCode = 200;
         this.result = result;
     }
 
