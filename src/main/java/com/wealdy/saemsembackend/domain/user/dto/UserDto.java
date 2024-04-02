@@ -39,7 +39,6 @@ public class UserDto {
     @AllArgsConstructor
     public static class LoginResponse {
 
-        private long id;
         private String accessToken;
     }
 }

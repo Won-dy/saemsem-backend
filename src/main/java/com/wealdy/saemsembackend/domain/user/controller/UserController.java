@@ -1,6 +1,5 @@
 package com.wealdy.saemsembackend.domain.user.controller;
 
-import com.wealdy.saemsembackend.domain.core.response.IdResponseDto;
 import com.wealdy.saemsembackend.domain.core.response.Response;
 import com.wealdy.saemsembackend.domain.user.dto.UserDto;
 import com.wealdy.saemsembackend.domain.user.service.UserService;
@@ -20,8 +19,9 @@ public class UserController {
      * 회원가입 API
      */
     @PostMapping("/user")
-    public Response<IdResponseDto> join(@Valid @RequestBody UserDto.Create request) {
-        return Response.of(userService.join(request));
+    public Response<Void> join(@Valid @RequestBody UserDto.Create request) {
+        userService.join(request);
+        return Response.OK;
     }
 
     /**

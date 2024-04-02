@@ -2,7 +2,6 @@ package com.wealdy.saemsembackend.domain.user.service;
 
 import com.wealdy.saemsembackend.domain.core.exception.AlreadyExistException;
 import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
-import com.wealdy.saemsembackend.domain.core.response.IdResponseDto;
 import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
 import com.wealdy.saemsembackend.domain.core.util.JwtUtil;
 import com.wealdy.saemsembackend.domain.user.dto.UserDto;
@@ -20,13 +19,12 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public IdResponseDto join(UserDto.Create user) {
+    public void join(UserDto.Create user) {
         validateDuplicateId(user.getLoginId());
         validateDuplicateNickname(user.getNickname());
 
         User newUser = User.createUser(user.getLoginId(), user.getPassword(), user.getNickname());
         userRepository.save(newUser);
-        return IdResponseDto.from(newUser.getId());
     }
 
     private void validateDuplicateId(String loginId) {
@@ -52,6 +50,6 @@ public class UserService {
         JwtUtil jwtUtil = new JwtUtil();
         Long userId = loginUser.get(0).getId();
         String accessToken = jwtUtil.createAccessToken(userId);
-        return new UserDto.LoginResponse(userId, accessToken);
+        return new UserDto.LoginResponse(accessToken);
     }
 }
