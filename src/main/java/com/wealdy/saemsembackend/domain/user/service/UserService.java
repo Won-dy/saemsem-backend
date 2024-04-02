@@ -51,7 +51,7 @@ public class UserService {
             throw new NotFoundException(ResponseCode.NOT_FOUND_USER);
         }
 
-        Long userId = loginUser.getFirst().getId();
+        Long userId = loginUser.get(0).getId();
         String accessToken = jwtUtil.createAccessToken(userId);
         return new UserDto.LoginResponse(userId, accessToken);
     }
