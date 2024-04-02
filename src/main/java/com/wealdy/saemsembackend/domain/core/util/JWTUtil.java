@@ -1,7 +1,6 @@
 package com.wealdy.saemsembackend.domain.core.util;
 
 import static com.wealdy.saemsembackend.domain.core.Constant.ACCESS_TOKEN_EXPIRATION;
-import static com.wealdy.saemsembackend.domain.core.Constant.AUTHORIZATION;
 import static com.wealdy.saemsembackend.domain.core.Constant.PREFIX_BEARER;
 import static com.wealdy.saemsembackend.domain.core.Constant.USER_ID_KEY;
 
@@ -15,12 +14,10 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component
 public class JWTUtil {
@@ -60,31 +57,10 @@ public class JWTUtil {
         }
     }
 
-    public void verifyToken(HttpServletRequest request) {
-        JWTDto jwt = parseToken(getTokenFromHeader(request));
-
-        setAttributeUserId(request, jwt);
-    }
-
-    public String getTokenFromHeader(HttpServletRequest request) {
-        String tokenString = request.getHeader(AUTHORIZATION);
-
-        if (StringUtils.hasText(tokenString)) {
-            return tokenString;
-        }
-
-        throw new InvalidTokenException(ResponseCode.INVALID_TOKEN);
-    }
-
     private String removePrefix(String token) {
         if (token.startsWith(PREFIX_BEARER)) {
             return token.substring(7);
         }
-
         return token;
-    }
-
-    private void setAttributeUserId(HttpServletRequest request, JWTDto jwt) {
-        request.setAttribute(USER_ID_KEY, jwt.getUserId());
     }
 }
