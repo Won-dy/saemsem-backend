@@ -47,9 +47,9 @@ public class JWTUtil {
 
             return new JWTDto(claims.get(USER_ID_KEY, Long.class), claims.getExpiration(), claims.getIssuedAt(), token);
         } catch (ExpiredJwtException ex) {
-            throw new ExpiredTokenException(ResponseCode.EXPIRED_TOKEN);
+            throw new ExpiredTokenException();
         } catch (JwtException ex) {
-            throw new InvalidTokenException(ResponseCode.INVALID_TOKEN);
+            throw new InvalidTokenException();
         }
     }
 

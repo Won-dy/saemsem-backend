@@ -40,6 +40,6 @@ public class AuthInterceptor implements HandlerInterceptor {
             return tokenString;
         }
 
-        throw new InvalidTokenException(ResponseCode.INVALID_TOKEN);
+        throw new InvalidTokenException();
     }
 }

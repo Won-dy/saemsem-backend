@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 
 public class ExpiredTokenException extends ExceptionBase {
 
-    public ExpiredTokenException(ResponseCode responseCode) {
-        code = responseCode.getCode();
-        message = responseCode.getMessage();
+    public ExpiredTokenException() {
+        code = ResponseCode.EXPIRED_TOKEN.getCode();
+        message = ResponseCode.EXPIRED_TOKEN.getMessage();
     }
 
     @Override

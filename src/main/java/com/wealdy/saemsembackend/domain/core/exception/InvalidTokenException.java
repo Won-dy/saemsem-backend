@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 
 public class InvalidTokenException extends ExceptionBase {
 
-    public InvalidTokenException(ResponseCode responseCode) {
-        code = responseCode.getCode();
-        message = responseCode.getMessage();
+    public InvalidTokenException() {
+        code = ResponseCode.INVALID_TOKEN.getCode();
+        message = ResponseCode.INVALID_TOKEN.getMessage();
     }
 
     @Override
