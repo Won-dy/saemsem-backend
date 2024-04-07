@@ -1,7 +1,9 @@
 package com.wealdy.saemsembackend.domain.user.controller;
 
 import com.wealdy.saemsembackend.domain.core.response.Response;
-import com.wealdy.saemsembackend.domain.user.dto.UserDto;
+import com.wealdy.saemsembackend.domain.user.controller.request.JoinRequest;
+import com.wealdy.saemsembackend.domain.user.controller.request.LoginRequest;
+import com.wealdy.saemsembackend.domain.user.controller.response.LoginResponse;
 import com.wealdy.saemsembackend.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +21,8 @@ public class UserController {
      * 회원가입 API
      */
     @PostMapping("/user")
-    public Response<Void> join(@Valid @RequestBody UserDto.Create request) {
-        userService.join(request);
+    public Response<Void> join(@Valid @RequestBody JoinRequest request) {
+        userService.join(request.getLoginId(), request.getPassword(), request.getNickname());
         return Response.OK;
     }
 
@@ -28,7 +30,7 @@ public class UserController {
      * 로그인 API
      */
     @PostMapping("/login")
-    public Response<UserDto.LoginResponse> login(@Valid @RequestBody UserDto.LoginRequest request) {
-        return Response.of(userService.login(request));
+    public Response<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        return Response.of(LoginResponse.from(userService.login(request.getLoginId(), request.getPassword())));
     }
 }

@@ -4,9 +4,9 @@ import com.wealdy.saemsembackend.domain.core.exception.AlreadyExistException;
 import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
 import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
 import com.wealdy.saemsembackend.domain.core.util.JwtUtil;
-import com.wealdy.saemsembackend.domain.user.dto.UserDto;
 import com.wealdy.saemsembackend.domain.user.entity.User;
 import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
+import com.wealdy.saemsembackend.domain.user.service.dto.GetLoginDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,11 +19,11 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void join(UserDto.Create user) {
-        validateDuplicateId(user.getLoginId());
-        validateDuplicateNickname(user.getNickname());
+    public void join(String loginId, String password, String nickname) {
+        validateDuplicateId(loginId);
+        validateDuplicateNickname(nickname);
 
-        User newUser = User.createUser(user.getLoginId(), user.getPassword(), user.getNickname());
+        User newUser = User.createUser(loginId, password, nickname);
         userRepository.save(newUser);
     }
 
@@ -41,8 +41,8 @@ public class UserService {
         }
     }
 
-    public UserDto.LoginResponse login(UserDto.LoginRequest loginRequest) {
-        List<User> loginUser = userRepository.findByLoginIdAndPassword(loginRequest.getLoginId(), loginRequest.getPassword());
+    public GetLoginDto login(String id, String password) {
+        List<User> loginUser = userRepository.findByLoginIdAndPassword(id, password);
         if (loginUser.isEmpty()) {
             throw new NotFoundException(ResponseCode.NOT_FOUND_USER);
         }
@@ -50,6 +50,6 @@ public class UserService {
         JwtUtil jwtUtil = new JwtUtil();
         Long userId = loginUser.get(0).getId();
         String accessToken = jwtUtil.createAccessToken(userId);
-        return new UserDto.LoginResponse(accessToken);
+        return new GetLoginDto(accessToken);
     }
 }

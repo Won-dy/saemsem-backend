@@ -1,8 +1,7 @@
 package com.wealdy.saemsembackend.domain.category.service;
 
-import com.wealdy.saemsembackend.domain.core.response.ListResponseDto;
-import com.wealdy.saemsembackend.domain.category.dto.CategoryDto.GetList;
 import com.wealdy.saemsembackend.domain.category.repository.CategoryRepository;
+import com.wealdy.saemsembackend.domain.category.service.dto.GetCategoryDto;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -17,18 +16,11 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     /**
-     * 카테고리 전체 개수 조회
-     */
-    public Long getCategoryCount() {
-        return categoryRepository.countAll();
-    }
-
-    /**
      * 카테고리 전체 목록 조회
      */
-    public ListResponseDto<GetList> getCategories() {
-        List<GetList> categories = categoryRepository.findAll().stream()
-            .map(GetList::from).collect(Collectors.toList());
-        return ListResponseDto.of(getCategoryCount(), categories);
+    public List<GetCategoryDto> getCategories() {
+        return categoryRepository.findAll().stream()
+            .map(GetCategoryDto::from)
+            .collect(Collectors.toList());
     }
 }
