@@ -25,6 +25,9 @@ public class Budget {
     @Column(nullable = false)
     private LocalDateTime date;  // 예산의 기준 날짜
 
+    @Column(nullable = false)
+    private int amount;  // 금액
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;  // 사용자
