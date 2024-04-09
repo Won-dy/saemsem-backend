@@ -1,5 +1,6 @@
 package com.wealdy.saemsembackend.domain.category.service;
 
+import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.category.repository.CategoryRepository;
 import com.wealdy.saemsembackend.domain.category.service.dto.GetCategoryDto;
 import java.util.List;
@@ -22,5 +23,12 @@ public class CategoryService {
         return categoryRepository.findAll().stream()
             .map(GetCategoryDto::from)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * 카테고리 단일 조회 with name
+     */
+    public Category findByName(String name) {
+        return categoryRepository.findByName(name);
     }
 }

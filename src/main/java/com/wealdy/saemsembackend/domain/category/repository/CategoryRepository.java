@@ -19,4 +19,10 @@ public class CategoryRepository {
     public List<Category> findAll() {
         return em.createQuery("select c from Category c", Category.class).getResultList();
     }
+
+    public Category findByName(String name) {
+        return em.createQuery("select c from Category c where c.name=:name", Category.class)
+            .setParameter("name", name)
+            .getSingleResult();
+    }
 }

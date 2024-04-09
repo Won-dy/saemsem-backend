@@ -12,7 +12,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 @Entity
 public class Budget {
@@ -35,4 +37,21 @@ public class Budget {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;  // 카테고리
+
+    public Budget(LocalDateTime date, int amount, User user, Category category) {
+        this.date = date;
+        this.amount = amount;
+        this.user = user;
+        this.category = category;
+    }
+
+    // 생성 메서드
+    public static Budget createBudget(LocalDateTime date, int amount, User user, Category category) {
+        return new Budget(
+            date,
+            amount,
+            user,
+            category
+        );
+    }
 }
