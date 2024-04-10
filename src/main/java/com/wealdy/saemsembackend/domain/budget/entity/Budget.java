@@ -38,7 +38,7 @@ public class Budget {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;  // 카테고리
 
-    public Budget(LocalDateTime date, int amount, User user, Category category) {
+    private Budget(LocalDateTime date, int amount, User user, Category category) {
         this.date = date;
         this.amount = amount;
         this.user = user;
