@@ -22,19 +22,27 @@ public class BudgetService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void createBudget(LocalDate date, List<GetBudgetDto> getBudgetDtoList) {
+    public void createBudget(LocalDate date, List<GetBudgetDto> getBudgetDtoList, String userId) {
         getBudgetDtoList
             .forEach(getBudgetDto -> {
-                // todo: 로그인 한 사용자 정보 조회
-                User user = userRepository.findByLoginId("test1").get(0);
-                Category category = categoryService.findByName(getBudgetDto.getCategory());
-                Budget budget = Budget.createBudget(
-                    date,
-                    getBudgetDto.getAmount(),
-                    user,
-                    category
-                );
-                budgetRepository.save(budget);
+                User user = userRepository.findById(userId).get(0);
+                Category category = categoryService.findByName(getBudgetDto.getCategoryName());
+                Budget findBudget = findByDateAndCategoryAndUser(date, category, user);
+                if (findBudget == null) {
+                    Budget budget = Budget.createBudget(
+                        date,
+                        getBudgetDto.getAmount(),
+                        user,
+                        category
+                    );
+                    budgetRepository.save(budget);
+                } else {
+                    findBudget.updateBudget(getBudgetDto.getAmount());
+                }
             });
+    }
+
+    private Budget findByDateAndCategoryAndUser(LocalDate date, Category category, User user) {
+        return budgetRepository.findByDateAndCategoryAndUser(date, category, user);
     }
 }

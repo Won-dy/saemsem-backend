@@ -16,6 +16,12 @@ public class UserRepository {
         em.persist(user);
     }
 
+    public List<User> findById(String id) {
+        return em.createQuery("select u from User u where u.id = :id", User.class)
+            .setParameter("id", id)
+            .getResultList();
+    }
+
     public List<User> findByLoginId(String id) {
         return em.createQuery("select u from User u where u.loginId = :id", User.class)
             .setParameter("id", id)

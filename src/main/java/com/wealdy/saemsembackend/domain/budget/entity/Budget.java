@@ -45,6 +45,10 @@ public class Budget {
         this.category = category;
     }
 
+    public void updateBudget(int amount) {
+        this.amount = amount;
+    }
+
     // 생성 메서드
     public static Budget createBudget(LocalDate date, int amount, User user, Category category) {
         return new Budget(
