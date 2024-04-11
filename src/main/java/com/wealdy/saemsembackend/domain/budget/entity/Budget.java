@@ -10,7 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,7 +25,7 @@ public class Budget {
     private Long id;  // 예산 id
 
     @Column(nullable = false)
-    private LocalDateTime date;  // 예산의 기준 날짜
+    private LocalDate date;  // 예산의 기준 날짜
 
     @Column(nullable = false)
     private int amount;  // 금액
@@ -38,7 +38,7 @@ public class Budget {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;  // 카테고리
 
-    private Budget(LocalDateTime date, int amount, User user, Category category) {
+    private Budget(LocalDate date, int amount, User user, Category category) {
         this.date = date;
         this.amount = amount;
         this.user = user;
@@ -46,7 +46,7 @@ public class Budget {
     }
 
     // 생성 메서드
-    public static Budget createBudget(LocalDateTime date, int amount, User user, Category category) {
+    public static Budget createBudget(LocalDate date, int amount, User user, Category category) {
         return new Budget(
             date,
             amount,

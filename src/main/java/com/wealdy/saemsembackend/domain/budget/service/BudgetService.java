@@ -7,7 +7,7 @@ import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.category.service.CategoryService;
 import com.wealdy.saemsembackend.domain.user.entity.User;
 import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class BudgetService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void createBudget(LocalDateTime date, List<GetBudgetDto> getBudgetDtoList) {
+    public void createBudget(LocalDate date, List<GetBudgetDto> getBudgetDtoList) {
         getBudgetDtoList
             .forEach(getBudgetDto -> {
                 // todo: 로그인 한 사용자 정보 조회
