@@ -11,15 +11,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(uniqueConstraints = {
     @UniqueConstraint(name = "unique_user_login_id", columnNames = {"loginId"}),
     @UniqueConstraint(name = "unique_user_nickname", columnNames = {"nickname"})
@@ -41,7 +40,9 @@ public class User {
     @Column(length = 15, nullable = false)
     private String nickname;  // 닉네임
 
-    @Column(columnDefinition = "varchar(1) default 'N'", nullable = false)
+    //    @Column(columnDefinition = "varchar(1) default 'N'", nullable = false)
+    @ColumnDefault("N")
+    @Column(nullable = false, length = 1)
     @Enumerated(EnumType.STRING)
     private YnColumn isDeleted;  // 삭제 여부
 
@@ -49,6 +50,15 @@ public class User {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(nullable = false)
     private LocalDateTime createdAt;  // 생성일시
+
+    public User(Long id, String loginId, String password, String nickname, YnColumn isDeleted, LocalDateTime createdAt) {
+        this.id = id;
+        this.loginId = loginId;
+        this.password = password;
+        this.nickname = nickname;
+        this.isDeleted = isDeleted;
+        this.createdAt = createdAt;
+    }
 
     public static User createUser(String loginId, String password, String nickname) {
         return new User(null, loginId, password, nickname, YnColumn.N, null);
