@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -18,7 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(uniqueConstraints = {
     @UniqueConstraint(name = "unique_user_login_id", columnNames = {"loginId"}),
     @UniqueConstraint(name = "unique_user_nickname", columnNames = {"nickname"})
@@ -51,7 +52,7 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime createdAt;  // 생성일시
 
-    public User(Long id, String loginId, String password, String nickname, YnColumn isDeleted, LocalDateTime createdAt) {
+    private User(Long id, String loginId, String password, String nickname, YnColumn isDeleted, LocalDateTime createdAt) {
         this.id = id;
         this.loginId = loginId;
         this.password = password;
