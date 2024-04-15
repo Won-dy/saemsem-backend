@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public class CreateBudgetRequest {
 
-    @NotNull
+    @NotNull(message = "날짜는 필수 값입니다.")
     private LocalDate date;
     private List<@Valid GetBudgetDto> budgets;
 }

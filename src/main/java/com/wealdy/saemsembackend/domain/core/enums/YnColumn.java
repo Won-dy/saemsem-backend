@@ -12,4 +12,8 @@ public enum YnColumn {
     YnColumn(boolean ynBoolean) {
         this.ynBoolean = ynBoolean;
     }
+
+    public static YnColumn fromBoolean(boolean ynBoolean) {
+        return ynBoolean ? Y : N;
+    }
 }
