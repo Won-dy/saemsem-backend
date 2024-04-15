@@ -23,6 +23,7 @@ public enum ResponseCode {
     // Http Status Code 404
     NOT_FOUND_USER(4001, "존재하지 않는 회원입니다."),
     NOT_FOUND_CATEGORY(4002, "존재하지 않는 카테고리입니다."),
+    NOT_FOUND_SPENDING(4003, "존재하지 않는 지출입니다."),
 
     // HTTP_CODE 500
     UNKNOWN_ERROR(-1, "Unknown Error");
