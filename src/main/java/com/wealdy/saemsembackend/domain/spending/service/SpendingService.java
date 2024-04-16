@@ -37,6 +37,7 @@ public class SpendingService {
         return GetSpendingDto.from(spending);
     }
 
+    @Transactional
     public void deleteSpending(Long spendingId) {
         Spending spending = spendingRepository.findById(spendingId).orElseThrow(() -> new NotFoundException(NOT_FOUND_SPENDING));
         spendingRepository.delete(spending);
