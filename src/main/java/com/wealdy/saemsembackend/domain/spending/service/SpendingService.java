@@ -36,4 +36,9 @@ public class SpendingService {
         Spending spending = spendingRepository.findById(spendingId).orElseThrow(() -> new NotFoundException(NOT_FOUND_SPENDING));
         return GetSpendingDto.from(spending);
     }
+
+    public void deleteSpending(Long spendingId) {
+        Spending spending = spendingRepository.findById(spendingId).orElseThrow(() -> new NotFoundException(NOT_FOUND_SPENDING));
+        spendingRepository.delete(spending);
+    }
 }
