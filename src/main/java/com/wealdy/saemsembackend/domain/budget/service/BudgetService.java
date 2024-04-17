@@ -27,7 +27,7 @@ public class BudgetService {
             .forEach(getBudgetDto -> {
                 User user = userRepository.findById(userId).get(0);
                 Category category = categoryService.findByName(getBudgetDto.getCategoryName());
-                Budget findBudget = findByDateAndCategoryAndUser(date, category, user);
+                Budget findBudget = budgetRepository.findByDateAndCategoryAndUser(date, category, user);
                 if (findBudget == null) {
                     Budget budget = Budget.createBudget(
                         date,
@@ -40,9 +40,5 @@ public class BudgetService {
                     findBudget.updateBudget(getBudgetDto.getAmount());
                 }
             });
-    }
-
-    private Budget findByDateAndCategoryAndUser(LocalDate date, Category category, User user) {
-        return budgetRepository.findByDateAndCategoryAndUser(date, category, user);
     }
 }
