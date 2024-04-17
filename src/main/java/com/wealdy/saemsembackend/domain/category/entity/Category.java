@@ -5,15 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 
 @Getter
 @Entity
-@Table(uniqueConstraints = {
-    @UniqueConstraint(name = "unique_category_name", columnNames = {"name"})
-})
 public class Category {
 
     @Id
@@ -21,6 +16,6 @@ public class Category {
     @Column(name = "category_id")
     private Long id;  // 카테고리 id
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 30, nullable = false, unique = true)
     private String name;  // 카테고리명
 }

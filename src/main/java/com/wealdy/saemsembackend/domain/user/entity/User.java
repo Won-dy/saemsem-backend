@@ -8,8 +8,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,10 +18,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(uniqueConstraints = {
-    @UniqueConstraint(name = "unique_user_login_id", columnNames = {"loginId"}),
-    @UniqueConstraint(name = "unique_user_nickname", columnNames = {"nickname"})
-})
 @Entity
 public class User {
 
@@ -32,16 +26,15 @@ public class User {
     @Column(name = "user_id")
     private Long id;  // 사용자 id
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, unique = true)
     private String loginId;  // 아이디
 
     @Column(length = 60, nullable = false)
     private String password;  // 비밀번호
 
-    @Column(length = 15, nullable = false)
+    @Column(length = 15, nullable = false, unique = true)
     private String nickname;  // 닉네임
 
-    //    @Column(columnDefinition = "varchar(1) default 'N'", nullable = false)
     @ColumnDefault("'N'")
     @Column(nullable = false, length = 1)
     @Enumerated(EnumType.STRING)
