@@ -55,7 +55,7 @@ public class Spending {
         this.date = date;
         this.amount = amount;
         this.memo = memo;
-        this.excludeTotal = YnColumn.fromBoolean(excludeTotal);
+        this.excludeTotal = YnColumn.from(excludeTotal);
         this.user = user;
         this.category = category;
     }
