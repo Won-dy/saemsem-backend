@@ -42,7 +42,7 @@ public class User {
     private String nickname;  // 닉네임
 
     //    @Column(columnDefinition = "varchar(1) default 'N'", nullable = false)
-    @ColumnDefault("N")
+    @ColumnDefault("'N'")
     @Column(nullable = false, length = 1)
     @Enumerated(EnumType.STRING)
     private YnColumn isDeleted;  // 삭제 여부

@@ -38,7 +38,7 @@ public class Spending {
     @Column(length = 200)
     private String memo;  // 메모
 
-    @ColumnDefault("N")
+    @ColumnDefault("'N'")
     @Column(nullable = false, length = 1)
     @Enumerated(EnumType.STRING)
     private YnColumn excludeTotal;  // 지출 합계 제외 여부
