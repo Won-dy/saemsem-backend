@@ -14,7 +14,7 @@ public class GetSpendingDto {
     private Long id;
     private String categoryName;
     private LocalDateTime date;
-    private int amount;
+    private long amount;
     private String memo;
     private YnColumn excludeTotal;
 

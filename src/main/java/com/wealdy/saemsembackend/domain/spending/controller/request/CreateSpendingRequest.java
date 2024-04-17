@@ -17,7 +17,7 @@ public class CreateSpendingRequest {
     private LocalDateTime date;
 
     @Min(value = 0, message = "금액은 0원 이상으로 입력해야 합니다.")
-    private int amount;
+    private long amount;
 
     @Size(max = 200, message = "메모는 200자까지 입력할 수 있습니다.")
     private String memo;

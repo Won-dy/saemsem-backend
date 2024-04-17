@@ -33,7 +33,7 @@ public class Spending {
     private LocalDateTime date;  // 지출일시
 
     @Column(nullable = false)
-    private int amount;  // 금액
+    private long amount;  // 금액
 
     @Column(length = 200)
     private String memo;  // 메모
@@ -51,7 +51,7 @@ public class Spending {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;  // 카테고리
 
-    private Spending(LocalDateTime date, int amount, String memo, boolean excludeTotal, User user, Category category) {
+    private Spending(LocalDateTime date, long amount, String memo, boolean excludeTotal, User user, Category category) {
         this.date = date;
         this.amount = amount;
         this.memo = memo;
@@ -60,7 +60,7 @@ public class Spending {
         this.category = category;
     }
 
-    public static Spending createSpending(LocalDateTime date, int amount, String memo, boolean excludeTotal, User user, Category category) {
+    public static Spending createSpending(LocalDateTime date, long amount, String memo, boolean excludeTotal, User user, Category category) {
         return new Spending(
             date,
             amount,
