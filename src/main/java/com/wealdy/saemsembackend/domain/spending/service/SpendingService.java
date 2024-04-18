@@ -36,8 +36,9 @@ public class SpendingService {
         return spending.getId();
     }
 
-    public GetSpendingDto getSpending(Long spendingId) {
-        Spending spending = spendingRepository.findById(spendingId)
+    public GetSpendingDto getSpending(Long spendingId, String userId) {
+        User user = userService.getUserById(userId);
+        Spending spending = spendingRepository.findByIdAndUser(spendingId, user)
             .orElseThrow(() -> new NotFoundException(NOT_FOUND_SPENDING));
         return GetSpendingDto.from(spending);
     }

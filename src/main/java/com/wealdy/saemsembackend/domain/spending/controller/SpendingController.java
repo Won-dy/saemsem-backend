@@ -40,8 +40,8 @@ public class SpendingController {
     }
 
     @GetMapping("/{spendingId}")
-    public Response<SpendingResponse> getSpending(@PathVariable Long spendingId) {
-        return Response.of(SpendingResponse.from(spendingService.getSpending(spendingId)));
+    public Response<SpendingResponse> getSpending(@PathVariable Long spendingId, @RequestAttribute(name = USER_ID_KEY) String userId) {
+        return Response.of(SpendingResponse.from(spendingService.getSpending(spendingId, userId)));
     }
 
     @GetMapping
