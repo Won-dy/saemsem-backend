@@ -2,13 +2,17 @@ package com.wealdy.saemsembackend.domain.spending.repository;
 
 import com.wealdy.saemsembackend.domain.spending.entity.Spending;
 import com.wealdy.saemsembackend.domain.spending.repository.projection.SpendingSummaryProjection;
+import com.wealdy.saemsembackend.domain.user.entity.User;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface SpendingRepository extends JpaRepository<Spending, Long> {
+
+    Optional<Spending> findByIdAndUser(Long id, User user);
 
     @Query(value = "select s from Spending s join fetch s.category where s.date between :startDate and :endDate order by s.date desc")
     List<Spending> findByDateBetweenOrderByDateDesc(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);

@@ -65,8 +65,8 @@ public class SpendingController {
     }
 
     @DeleteMapping("/{spendingId}")
-    public Response<Void> deleteSpending(@PathVariable Long spendingId) {
-        spendingService.deleteSpending(spendingId);
+    public Response<Void> deleteSpending(@PathVariable Long spendingId, @RequestAttribute(name = USER_ID_KEY) String userId) {
+        spendingService.deleteSpending(spendingId, userId);
         return Response.OK;
     }
 }

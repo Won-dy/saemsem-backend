@@ -68,8 +68,9 @@ public class SpendingService {
     }
 
     @Transactional
-    public void deleteSpending(Long spendingId) {
-        Spending spending = spendingRepository.findById(spendingId)
+    public void deleteSpending(Long spendingId, String userId) {
+        User user = userService.getUserById(userId);
+        Spending spending = spendingRepository.findByIdAndUser(spendingId, user)
             .orElseThrow(() -> new NotFoundException(NOT_FOUND_SPENDING));
         spendingRepository.delete(spending);
     }
