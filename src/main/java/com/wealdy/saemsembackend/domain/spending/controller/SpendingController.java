@@ -50,14 +50,15 @@ public class SpendingController {
         @RequestParam LocalDate endDate,
         @RequestParam(required = false) List<String> category,
         @RequestParam(required = false) Long minAmount,
-        @RequestParam(required = false) Long maxAmount
+        @RequestParam(required = false) Long maxAmount,
+        @RequestAttribute(name = USER_ID_KEY) String userId
     ) {
         ListResponseDto<SpendingResponse> spendingList = ListResponseDto.from(
-            spendingService.getSpendingList(startDate, endDate, category, minAmount, maxAmount).stream()
+            spendingService.getSpendingList(startDate, endDate, category, minAmount, maxAmount, userId).stream()
                 .map(SpendingResponse::from)
                 .toList());
-        long sumOfAmount = spendingService.getSumOfAmountByDate(startDate, endDate);
-        List<SpendingSummaryDto> sumOfAmountByCategory = spendingService.getSumOfAmountByCategory(startDate, endDate).stream()
+        long sumOfAmount = spendingService.getSumOfAmountByDate(startDate, endDate, userId);
+        List<SpendingSummaryDto> sumOfAmountByCategory = spendingService.getSumOfAmountByCategory(startDate, endDate, userId).stream()
             .map(SpendingSummaryDto::from)
             .toList();
 
