@@ -9,6 +9,7 @@ import com.wealdy.saemsembackend.domain.user.entity.User;
 import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +27,9 @@ public class BudgetService {
         getBudgetDtoList
             .forEach(getBudgetDto -> {
                 User user = userRepository.findById(userId).get(0);
-                Category category = categoryService.findByName(getBudgetDto.getCategoryName());
-                Budget findBudget = budgetRepository.findByDateAndCategoryAndUser(date, category, user);
-                if (findBudget == null) {
+                Category category = categoryService.getCategoryByName(getBudgetDto.getCategoryName());
+                Optional<Budget> findBudget = budgetRepository.findByDateAndCategoryAndUser(date, category, user);
+                if (findBudget.isEmpty()) {
                     Budget budget = Budget.createBudget(
                         date,
                         getBudgetDto.getAmount(),
@@ -37,7 +38,7 @@ public class BudgetService {
                     );
                     budgetRepository.save(budget);
                 } else {
-                    findBudget.updateBudget(getBudgetDto.getAmount());
+                    findBudget.get().updateBudget(getBudgetDto.getAmount());
                 }
             });
     }

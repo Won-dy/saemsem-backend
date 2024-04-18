@@ -30,7 +30,7 @@ public class SpendingService {
     @Transactional
     public Long createSpending(LocalDateTime date, long amount, String memo, boolean excludeTotal, String categoryName, String userId) {
         User user = userRepository.findById(userId).get(0);
-        Category category = categoryService.findByName(categoryName);
+        Category category = categoryService.getCategoryByName(categoryName);
 
         Spending spending = spendingRepository.save(Spending.createSpending(date, amount, memo, excludeTotal, user, category));
         return spending.getId();

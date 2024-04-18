@@ -1,8 +1,12 @@
 package com.wealdy.saemsembackend.domain.category.service;
 
+import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FOUND_CATEGORY;
+
 import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.category.repository.CategoryRepository;
 import com.wealdy.saemsembackend.domain.category.service.dto.GetCategoryDto;
+import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
+import jakarta.persistence.NoResultException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +32,11 @@ public class CategoryService {
     /**
      * 카테고리 단일 조회 with name
      */
-    public Category findByName(String name) {
-        return categoryRepository.findByName(name);
+    public Category getCategoryByName(String name) {
+        try {
+            return categoryRepository.getCategoryByName(name);
+        } catch (NoResultException e) {
+            throw new NotFoundException(NOT_FOUND_CATEGORY);
+        }
     }
 }

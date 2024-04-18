@@ -1,12 +1,8 @@
 package com.wealdy.saemsembackend.domain.category.repository;
 
-import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FOUND_CATEGORY;
-
 import com.wealdy.saemsembackend.domain.category.entity.Category;
-import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.TypedQuery;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -25,19 +21,9 @@ public class CategoryRepository {
         return em.createQuery("select c from Category c", Category.class).getResultList();
     }
 
-    public Category findByName(String name) {
-        // TODO: NoResultException 이 orElseThrow 까지 안오고 getSingleResult() 에서 에러 발생
-//        return Optional.ofNullable(em.createQuery("select c from Category c where c.name=:name", Category.class)
-//            .setParameter("name", name)
-//            .getSingleResult()).orElseThrow(() -> new NotFoundException(NOT_FOUND_CATEGORY));
-
-        TypedQuery<Category> query = em.createQuery("select c from Category c where c.name=:name", Category.class)
-            .setParameter("name", name);
-
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            throw new NotFoundException(NOT_FOUND_CATEGORY);
-        }
+    public Category getCategoryByName(String name) throws NoResultException {
+        return em.createQuery("select c from Category c where c.name=:name", Category.class)
+            .setParameter("name", name)
+            .getSingleResult();
     }
 }
