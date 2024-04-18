@@ -1,5 +1,7 @@
 package com.wealdy.saemsembackend.domain.user.service;
 
+import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FOUND_USER;
+
 import com.wealdy.saemsembackend.domain.core.exception.AlreadyExistException;
 import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
 import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
@@ -7,7 +9,6 @@ import com.wealdy.saemsembackend.domain.core.util.JwtUtil;
 import com.wealdy.saemsembackend.domain.user.entity.User;
 import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
 import com.wealdy.saemsembackend.domain.user.service.dto.GetLoginDto;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,28 +29,29 @@ public class UserService {
     }
 
     private void validateDuplicateId(String loginId) {
-        List<User> findUsers = userRepository.findByLoginId(loginId);
-        if (!findUsers.isEmpty()) {
+        if (userRepository.findByLoginId(loginId).isPresent()) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST_ID);
         }
     }
 
     private void validateDuplicateNickname(String nickname) {
-        List<User> findUsers = userRepository.findByNickname(nickname);
-        if (!findUsers.isEmpty()) {
+        if (userRepository.findByNickname(nickname).isPresent()) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST_NICKNAME);
         }
     }
 
     public GetLoginDto login(String id, String password) {
-        List<User> loginUser = userRepository.findByLoginIdAndPassword(id, password);
-        if (loginUser.isEmpty()) {
-            throw new NotFoundException(ResponseCode.NOT_FOUND_USER);
-        }
+        User user = userRepository.findByLoginIdAndPassword(id, password)
+            .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND_USER));
 
         JwtUtil jwtUtil = new JwtUtil();
-        Long userId = loginUser.get(0).getId();
+        Long userId = user.getId();
         String accessToken = jwtUtil.createAccessToken(userId);
         return new GetLoginDto(accessToken);
+    }
+
+    public User getUserById(String userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
     }
 }

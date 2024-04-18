@@ -2,7 +2,9 @@ package com.wealdy.saemsembackend.domain.user.repository;
 
 import com.wealdy.saemsembackend.domain.user.entity.User;
 import jakarta.persistence.EntityManager;
-import java.util.List;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -16,28 +18,44 @@ public class UserRepository {
         em.persist(user);
     }
 
-    public List<User> findById(String id) {
-        return em.createQuery("select u from User u where u.id = :id", User.class)
-            .setParameter("id", id)
-            .getResultList();
+    public Optional<User> findById(String id) {
+        TypedQuery<User> query = em.createQuery("select u from User u where u.id = :id", User.class)
+            .setParameter("id", id);
+        try {
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
-    public List<User> findByLoginId(String id) {
-        return em.createQuery("select u from User u where u.loginId = :id", User.class)
-            .setParameter("id", id)
-            .getResultList();
+    public Optional<User> findByLoginId(String id) {
+        TypedQuery<User> query = em.createQuery("select u from User u where u.loginId = :id", User.class)
+            .setParameter("id", id);
+        try {
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
-    public List<User> findByNickname(String nickname) {
-        return em.createQuery("select u from User u where u.nickname = :nickname", User.class)
-            .setParameter("nickname", nickname)
-            .getResultList();
+    public Optional<User> findByNickname(String nickname) {
+        TypedQuery<User> query = em.createQuery("select u from User u where u.nickname = :nickname", User.class)
+            .setParameter("nickname", nickname);
+        try {
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
-    public List<User> findByLoginIdAndPassword(String id, String password) {
-        return em.createQuery("select u from User u where u.loginId = :id and u.password = :password", User.class)
+    public Optional<User> findByLoginIdAndPassword(String id, String password) {
+        TypedQuery<User> query = em.createQuery("select u from User u where u.loginId = :id and u.password = :password", User.class)
             .setParameter("id", id)
-            .setParameter("password", password)
-            .getResultList();
+            .setParameter("password", password);
+        try {
+            return Optional.ofNullable(query.getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 }

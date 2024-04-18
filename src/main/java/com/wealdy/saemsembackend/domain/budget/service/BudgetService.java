@@ -6,7 +6,7 @@ import com.wealdy.saemsembackend.domain.budget.service.dto.GetBudgetDto;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.category.service.CategoryService;
 import com.wealdy.saemsembackend.domain.user.entity.User;
-import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
+import com.wealdy.saemsembackend.domain.user.service.UserService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -20,13 +20,13 @@ public class BudgetService {
 
     private final BudgetRepository budgetRepository;
     private final CategoryService categoryService;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional
     public void createBudget(LocalDate date, List<GetBudgetDto> getBudgetDtoList, String userId) {
         getBudgetDtoList
             .forEach(getBudgetDto -> {
-                User user = userRepository.findById(userId).get(0);
+                User user = userService.getUserById(userId);
                 Category category = categoryService.getCategoryByName(getBudgetDto.getCategoryName());
                 Optional<Budget> findBudget = budgetRepository.findByDateAndCategoryAndUser(date, category, user);
                 if (findBudget.isEmpty()) {

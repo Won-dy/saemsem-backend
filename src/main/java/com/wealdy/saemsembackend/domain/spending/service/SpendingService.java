@@ -10,7 +10,7 @@ import com.wealdy.saemsembackend.domain.spending.repository.SpendingRepository;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingSummaryDto;
 import com.wealdy.saemsembackend.domain.user.entity.User;
-import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
+import com.wealdy.saemsembackend.domain.user.service.UserService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -25,11 +25,11 @@ public class SpendingService {
 
     private final SpendingRepository spendingRepository;
     private final CategoryService categoryService;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional
     public Long createSpending(LocalDateTime date, long amount, String memo, boolean excludeTotal, String categoryName, String userId) {
-        User user = userRepository.findById(userId).get(0);
+        User user = userService.getUserById(userId);
         Category category = categoryService.getCategoryByName(categoryName);
 
         Spending spending = spendingRepository.save(Spending.createSpending(date, amount, memo, excludeTotal, user, category));
@@ -37,7 +37,8 @@ public class SpendingService {
     }
 
     public GetSpendingDto getSpending(Long spendingId) {
-        Spending spending = spendingRepository.findById(spendingId).orElseThrow(() -> new NotFoundException(NOT_FOUND_SPENDING));
+        Spending spending = spendingRepository.findById(spendingId)
+            .orElseThrow(() -> new NotFoundException(NOT_FOUND_SPENDING));
         return GetSpendingDto.from(spending);
     }
 
@@ -68,7 +69,8 @@ public class SpendingService {
 
     @Transactional
     public void deleteSpending(Long spendingId) {
-        Spending spending = spendingRepository.findById(spendingId).orElseThrow(() -> new NotFoundException(NOT_FOUND_SPENDING));
+        Spending spending = spendingRepository.findById(spendingId)
+            .orElseThrow(() -> new NotFoundException(NOT_FOUND_SPENDING));
         spendingRepository.delete(spending);
     }
 
