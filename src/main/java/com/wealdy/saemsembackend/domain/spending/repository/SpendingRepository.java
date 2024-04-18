@@ -17,7 +17,8 @@ public interface SpendingRepository extends JpaRepository<Spending, Long> {
     @Query(value = "select s from Spending s join fetch s.category where s.date between :startDate and :endDate order by s.date desc")
     List<Spending> findByDateBetweenOrderByDateDesc(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query(value = "select sum(s.amount) from Spending s where s.excludeTotal = 'N' and s.date between :startDate and :endDate")
+    @Query(value = "select case when sum(s.amount) is null then 0 else sum(s.amount) end "
+        + "from Spending s where s.excludeTotal = 'N' and s.date between :startDate and :endDate")
     long getSumOfAmountByDate(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     // 합계가 0인 카테고리는 select 되지 않음
@@ -27,7 +28,7 @@ public interface SpendingRepository extends JpaRepository<Spending, Long> {
         value = "select categoryName, sum(amount) as amount "
             + "from (select c.name as categoryName, sum(s.amount) as amount from spending s "
             + "left join category c on c.category_id = s.category_id "
-            + "where s.exclude_total='N' and s.date between '2024-01-01T00:00' and '2024-01-02T23:59:59' "
+            + "where s.exclude_total='N' and s.date between :startDate and :endDate "
             + "group by c.category_id "
             + "union "
             + "select c.name as categoryName, 0 as amount from spending s "
