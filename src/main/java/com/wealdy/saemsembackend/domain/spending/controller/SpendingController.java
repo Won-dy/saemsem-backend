@@ -57,10 +57,11 @@ public class SpendingController {
             spendingService.getSpendingList(startDate, endDate, category, minAmount, maxAmount, userId).stream()
                 .map(SpendingResponse::from)
                 .toList());
-        long sumOfAmount = spendingService.getSumOfAmountByDate(startDate, endDate, userId);
-        List<SpendingSummaryDto> sumOfAmountByCategory = spendingService.getSumOfAmountByCategory(startDate, endDate, userId).stream()
-            .map(SpendingSummaryDto::from)
-            .toList();
+        long sumOfAmount = spendingService.getSumOfAmountByDate(startDate, endDate, category, minAmount, maxAmount, userId);
+        List<SpendingSummaryDto> sumOfAmountByCategory =
+            spendingService.getSumOfAmountByCategory(startDate, endDate, category, minAmount, maxAmount, userId).stream()
+                .map(SpendingSummaryDto::from)
+                .toList();
 
         return Response.of(SpendingListResponse.of(sumOfAmount, sumOfAmountByCategory, spendingList));
     }

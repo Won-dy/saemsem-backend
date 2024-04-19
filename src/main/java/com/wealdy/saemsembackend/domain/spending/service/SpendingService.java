@@ -56,27 +56,43 @@ public class SpendingService {
         LocalDateTime startDateTime = getStartDateTime(startDate);
         LocalDateTime endDateTime = getEndDateTime(endDate);
 
-        return spendingRepository.findByDateBetweenOrderByDateDesc(startDateTime, endDateTime, user).stream()
+        return spendingRepository.findByDateBetweenOrderByDateDesc(startDateTime, endDateTime, category, minAmount, maxAmount, user).stream()
             .map(GetSpendingDto::from)
             .toList();
     }
 
-    public List<GetSpendingSummaryDto> getSumOfAmountByCategory(LocalDate startDate, LocalDate endDate, String userId) {
+    public List<GetSpendingSummaryDto> getSumOfAmountByCategory(
+        LocalDate startDate,
+        LocalDate endDate,
+        List<String> category,
+        Long minAmount,
+        Long maxAmount,
+        String userId
+    ) {
         LocalDateTime startDateTime = getStartDateTime(startDate);
         LocalDateTime endDateTime = getEndDateTime(endDate);
 
-        return spendingRepository.getSumOfAmountByCategory(startDateTime, endDateTime, userId).stream()
+        int categorySize = (category != null) ? category.size() : 0;
+
+        return spendingRepository.getSumOfAmountByCategory(startDateTime, endDateTime, categorySize, category, minAmount, maxAmount, userId).stream()
             .map(projection -> GetSpendingSummaryDto.of(projection.getCategoryName(), projection.getAmount()))
             .toList();
     }
 
-    public long getSumOfAmountByDate(LocalDate startDate, LocalDate endDate, String userId) {
+    public long getSumOfAmountByDate(
+        LocalDate startDate,
+        LocalDate endDate,
+        List<String> category,
+        Long minAmount,
+        Long maxAmount,
+        String userId
+    ) {
         User user = userService.getUserById(userId);
 
         LocalDateTime startDateTime = getStartDateTime(startDate);
         LocalDateTime endDateTime = getEndDateTime(endDate);
 
-        return spendingRepository.getSumOfAmountByDate(startDateTime, endDateTime, user);
+        return spendingRepository.getSumOfAmountByDate(startDateTime, endDateTime, category, minAmount, maxAmount, user);
     }
 
     @Transactional
