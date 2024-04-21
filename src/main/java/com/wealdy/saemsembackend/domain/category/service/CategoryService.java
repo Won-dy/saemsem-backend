@@ -7,7 +7,6 @@ import com.wealdy.saemsembackend.domain.category.repository.CategoryRepository;
 import com.wealdy.saemsembackend.domain.category.service.dto.GetCategoryDto;
 import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +24,7 @@ public class CategoryService {
     public List<GetCategoryDto> getCategories() {
         return categoryRepository.findAll().stream()
             .map(GetCategoryDto::from)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     /**
