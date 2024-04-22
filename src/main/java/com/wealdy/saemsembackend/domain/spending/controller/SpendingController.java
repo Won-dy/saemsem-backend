@@ -11,6 +11,7 @@ import com.wealdy.saemsembackend.domain.spending.controller.response.SpendingLis
 import com.wealdy.saemsembackend.domain.spending.controller.response.SpendingResponse;
 import com.wealdy.saemsembackend.domain.spending.service.SpendingService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -50,8 +51,8 @@ public class SpendingController {
         @RequestParam LocalDate startDate,
         @RequestParam LocalDate endDate,
         @RequestParam(required = false) List<String> category,
-        @RequestParam(required = false) Long minAmount,
-        @RequestParam(required = false) Long maxAmount,
+        @RequestParam(required = false) @PositiveOrZero(message = "금액은 0원 이상으로 입력해야 합니다.") Long minAmount,
+        @RequestParam(required = false) @PositiveOrZero(message = "금액은 0원 이상으로 입력해야 합니다.") Long maxAmount,
         @RequestAttribute(name = USER_ID_KEY) String userId
     ) {
         ListResponseDto<SpendingResponse> spendingList = ListResponseDto.from(
