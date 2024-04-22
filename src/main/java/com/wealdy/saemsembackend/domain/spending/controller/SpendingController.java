@@ -6,7 +6,7 @@ import com.wealdy.saemsembackend.domain.core.response.IdResponseDto;
 import com.wealdy.saemsembackend.domain.core.response.ListResponseDto;
 import com.wealdy.saemsembackend.domain.core.response.Response;
 import com.wealdy.saemsembackend.domain.spending.controller.dto.SpendingSummaryDto;
-import com.wealdy.saemsembackend.domain.spending.controller.request.CreateSpendingRequest;
+import com.wealdy.saemsembackend.domain.spending.controller.request.SaveSpendingRequest;
 import com.wealdy.saemsembackend.domain.spending.controller.response.SpendingListResponse;
 import com.wealdy.saemsembackend.domain.spending.controller.response.SpendingResponse;
 import com.wealdy.saemsembackend.domain.spending.service.SpendingService;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +33,7 @@ public class SpendingController {
     private final SpendingService spendingService;
 
     @PostMapping
-    public Response<IdResponseDto> create(@Valid @RequestBody CreateSpendingRequest request, @RequestAttribute(name = USER_ID_KEY) String userId) {
+    public Response<IdResponseDto> create(@Valid @RequestBody SaveSpendingRequest request, @RequestAttribute(name = USER_ID_KEY) String userId) {
         Long spendingId = spendingService.createSpending(
             request.getDate(), request.getAmount(), request.getMemo(), request.isExcludeTotal(), request.getCategoryName(), userId);
 
@@ -64,6 +65,18 @@ public class SpendingController {
                 .toList();
 
         return Response.of(SpendingListResponse.of(sumOfAmount, sumOfAmountByCategory, spendingList));
+    }
+
+    @PutMapping("/{spendingId}")
+    public Response<IdResponseDto> update(
+        @PathVariable Long spendingId,
+        @Valid @RequestBody SaveSpendingRequest request,
+        @RequestAttribute(name = USER_ID_KEY) String userId
+    ) {
+        spendingService.updateSpending(
+            spendingId, request.getDate(), request.getAmount(), request.getMemo(), request.isExcludeTotal(), request.getCategoryName(), userId);
+
+        return Response.of(IdResponseDto.from(spendingId));
     }
 
     @DeleteMapping("/{spendingId}")

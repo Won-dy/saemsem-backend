@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
-public class CreateSpendingRequest {
+public class SaveSpendingRequest {
 
     @NotBlank(message = "카테고리는 필수 값입니다.")
     private String categoryName;

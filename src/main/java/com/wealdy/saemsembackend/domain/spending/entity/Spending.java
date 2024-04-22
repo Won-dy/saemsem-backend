@@ -70,4 +70,12 @@ public class Spending {
             category
         );
     }
+
+    public void updateSpending(LocalDateTime date, long amount, String memo, boolean excludeTotal, Category category) {
+        this.date = date;
+        this.amount = amount;
+        this.memo = memo;
+        this.excludeTotal = YnColumn.from(excludeTotal);
+        this.category = category;
+    }
 }

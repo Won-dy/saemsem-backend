@@ -36,10 +36,20 @@ public class SpendingService {
         return spending.getId();
     }
 
+    @Transactional
+    public void updateSpending(
+        Long spendingId, LocalDateTime date, long amount, String memo, boolean excludeTotal, String categoryName, String userId
+    ) {
+        User user = userService.getUserById(userId);
+        Category category = categoryService.getCategoryByName(categoryName);
+
+        Spending spending = getSpending(spendingId, user);
+        spending.updateSpending(date, amount, memo, excludeTotal, category);
+    }
+
     public GetSpendingDto getSpending(Long spendingId, String userId) {
         User user = userService.getUserById(userId);
-        Spending spending = spendingRepository.findByIdAndUser(spendingId, user)
-            .orElseThrow(() -> new NotFoundException(NOT_FOUND_SPENDING));
+        Spending spending = getSpending(spendingId, user);
         return GetSpendingDto.from(spending);
     }
 
@@ -98,9 +108,13 @@ public class SpendingService {
     @Transactional
     public void deleteSpending(Long spendingId, String userId) {
         User user = userService.getUserById(userId);
-        Spending spending = spendingRepository.findByIdAndUser(spendingId, user)
-            .orElseThrow(() -> new NotFoundException(NOT_FOUND_SPENDING));
+        Spending spending = getSpending(spendingId, user);
         spendingRepository.delete(spending);
+    }
+
+    private Spending getSpending(Long spendingId, User user) {
+        return spendingRepository.findByIdAndUser(spendingId, user)
+            .orElseThrow(() -> new NotFoundException(NOT_FOUND_SPENDING));
     }
 
     private LocalDateTime getStartDateTime(LocalDate startDate) {
