@@ -14,9 +14,9 @@ public class GetBudgetDto {
     private String categoryName;
 
     @PositiveOrZero(message = "금액은 0원 이상으로 입력해야 합니다.")
-    private int amount;
+    private long amount;
 
-    public static GetBudgetDto of(String categoryName, int amount) {
+    public static GetBudgetDto of(String categoryName, long amount) {
         return new GetBudgetDto(categoryName, amount);
     }
 }
