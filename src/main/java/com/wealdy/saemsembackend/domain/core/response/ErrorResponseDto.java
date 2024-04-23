@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 public class ErrorResponseDto {
 
-    private boolean error;
-    private int httpStatusCode;
-    private int errorCode;
-    private String errorMessage;
+    private final boolean error;
+    private final int httpStatusCode;
+    private final int errorCode;
+    private final String errorMessage;
 
     public ErrorResponseDto(ExceptionBase exception) {
         this.error = true;

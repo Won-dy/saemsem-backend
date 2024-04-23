@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -18,6 +19,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Entity
 public class User {
 
@@ -44,15 +46,6 @@ public class User {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(nullable = false)
     private LocalDateTime createdAt;  // 생성일시
-
-    private User(Long id, String loginId, String password, String nickname, YnColumn isDeleted, LocalDateTime createdAt) {
-        this.id = id;
-        this.loginId = loginId;
-        this.password = password;
-        this.nickname = nickname;
-        this.isDeleted = isDeleted;
-        this.createdAt = createdAt;
-    }
 
     public static User createUser(String loginId, String password, String nickname) {
         return new User(null, loginId, password, nickname, YnColumn.N, null);

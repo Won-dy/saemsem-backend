@@ -36,7 +36,7 @@ public class SpendingController {
     private final SpendingService spendingService;
 
     @PostMapping
-    public Response<IdResponseDto> create(@Valid @RequestBody SaveSpendingRequest request, @RequestAttribute(name = USER_ID_KEY) String userId) {
+    public Response<IdResponseDto> createSpending(@Valid @RequestBody SaveSpendingRequest request, @RequestAttribute(name = USER_ID_KEY) String userId) {
         Long spendingId = spendingService.createSpending(
             LocalDateTime.parse(request.getDate()),
             request.getAmount(),

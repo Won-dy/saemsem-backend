@@ -27,7 +27,7 @@ public class BudgetService {
         getBudgetDtoList
             .forEach(getBudgetDto -> {
                 User user = userService.getUserById(userId);
-                Category category = categoryService.getCategoryByName(getBudgetDto.getCategoryName());
+                Category category = categoryService.getCategory(getBudgetDto.getCategoryName());
                 Optional<Budget> findBudget = budgetRepository.findByDateAndCategoryAndUser(date, category, user);
                 if (findBudget.isEmpty()) {
                     Budget budget = Budget.createBudget(

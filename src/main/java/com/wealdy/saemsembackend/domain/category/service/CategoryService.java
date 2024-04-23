@@ -21,7 +21,7 @@ public class CategoryService {
     /**
      * 카테고리 전체 목록 조회
      */
-    public List<GetCategoryDto> getCategories() {
+    public List<GetCategoryDto> getCategoryList() {
         return categoryRepository.findAll().stream()
             .map(GetCategoryDto::from)
             .toList();
@@ -30,7 +30,7 @@ public class CategoryService {
     /**
      * 카테고리 단일 조회 with name
      */
-    public Category getCategoryByName(String name) {
+    public Category getCategory(String name) {
         return categoryRepository.findByName(name)
             .orElseThrow(() -> new NotFoundException(NOT_FOUND_CATEGORY));
     }
