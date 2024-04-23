@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,7 +38,13 @@ public class SpendingController {
     @PostMapping
     public Response<IdResponseDto> create(@Valid @RequestBody SaveSpendingRequest request, @RequestAttribute(name = USER_ID_KEY) String userId) {
         Long spendingId = spendingService.createSpending(
-            request.getDate(), request.getAmount(), request.getMemo(), request.isExcludeTotal(), request.getCategoryName(), userId);
+            LocalDateTime.parse(request.getDate()),
+            request.getAmount(),
+            request.getMemo(),
+            request.isExcludeTotal(),
+            request.getCategoryName(),
+            userId
+        );
 
         return Response.of(IdResponseDto.from(spendingId));
     }
@@ -79,7 +86,14 @@ public class SpendingController {
         @RequestAttribute(name = USER_ID_KEY) String userId
     ) {
         spendingService.updateSpending(
-            spendingId, request.getDate(), request.getAmount(), request.getMemo(), request.isExcludeTotal(), request.getCategoryName(), userId);
+            spendingId,
+            LocalDateTime.parse(request.getDate()),
+            request.getAmount(),
+            request.getMemo(),
+            request.isExcludeTotal(),
+            request.getCategoryName(),
+            userId
+        );
 
         return Response.of(IdResponseDto.from(spendingId));
     }

@@ -1,10 +1,9 @@
 package com.wealdy.saemsembackend.domain.spending.controller.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
@@ -13,8 +12,9 @@ public class SaveSpendingRequest {
     @NotBlank(message = "카테고리는 필수 값입니다.")
     private String categoryName;
 
-    @NotNull(message = "날짜는 필수 값입니다.")
-    private LocalDateTime date;
+    @NotBlank(message = "날짜는 필수 값입니다.")
+    @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}", message = "날짜 형식은 'yyyy-MM-dd'T'HH:mm:ss' 으로 입력해야 합니다.")
+    private String date;
 
     @PositiveOrZero(message = "금액은 0원 이상으로 입력해야 합니다.")
     private long amount;

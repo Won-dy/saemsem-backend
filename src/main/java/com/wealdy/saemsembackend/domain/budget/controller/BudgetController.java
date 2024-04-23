@@ -28,7 +28,7 @@ public class BudgetController {
 
     @PostMapping
     public Response<Void> createBudget(@Valid @RequestBody CreateBudgetRequest request, @RequestAttribute(name = USER_ID_KEY) String userId) {
-        budgetService.createBudget(request.getDate(), request.getBudgets(), userId);
+        budgetService.createBudget(DateUtils.convertFirstDayOfMonth(request.getDate()), request.getBudgets(), userId);
         return Response.OK;
     }
 
