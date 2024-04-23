@@ -11,6 +11,7 @@ import com.wealdy.saemsembackend.domain.spending.controller.response.SpendingLis
 import com.wealdy.saemsembackend.domain.spending.controller.response.SpendingResponse;
 import com.wealdy.saemsembackend.domain.spending.service.SpendingService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.util.List;
@@ -48,20 +49,23 @@ public class SpendingController {
 
     @GetMapping
     public Response<SpendingListResponse> getSpendingList(
-        @RequestParam LocalDate startDate,
-        @RequestParam LocalDate endDate,
+        @RequestParam @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "날짜 형식은 'yyyy-MM-dd' 으로 입력해야 합니다.") String startDate,
+        @RequestParam @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "날짜 형식은 'yyyy-MM-dd' 으로 입력해야 합니다.") String endDate,
         @RequestParam(required = false) List<String> category,
         @RequestParam(required = false) @PositiveOrZero(message = "금액은 0원 이상으로 입력해야 합니다.") Long minAmount,
         @RequestParam(required = false) @PositiveOrZero(message = "금액은 0원 이상으로 입력해야 합니다.") Long maxAmount,
         @RequestAttribute(name = USER_ID_KEY) String userId
     ) {
+        LocalDate startLocalDate = LocalDate.parse(startDate);
+        LocalDate endLocalDate = LocalDate.parse(endDate);
+
         ListResponseDto<SpendingResponse> spendingList = ListResponseDto.from(
-            spendingService.getSpendingList(startDate, endDate, category, minAmount, maxAmount, userId).stream()
+            spendingService.getSpendingList(startLocalDate, endLocalDate, category, minAmount, maxAmount, userId).stream()
                 .map(SpendingResponse::from)
                 .toList());
-        long sumOfAmount = spendingService.getSumOfAmountByDate(startDate, endDate, category, minAmount, maxAmount, userId);
+        long sumOfAmount = spendingService.getSumOfAmountByDate(startLocalDate, endLocalDate, category, minAmount, maxAmount, userId);
         List<SpendingSummaryDto> sumOfAmountByCategory =
-            spendingService.getSumOfAmountByCategory(startDate, endDate, category, minAmount, maxAmount, userId).stream()
+            spendingService.getSumOfAmountByCategory(startLocalDate, endLocalDate, category, minAmount, maxAmount, userId).stream()
                 .map(SpendingSummaryDto::from)
                 .toList();
 
