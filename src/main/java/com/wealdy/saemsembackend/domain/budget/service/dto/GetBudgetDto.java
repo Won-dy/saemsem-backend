@@ -2,8 +2,11 @@ package com.wealdy.saemsembackend.domain.budget.service.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class GetBudgetDto {
 
@@ -12,4 +15,8 @@ public class GetBudgetDto {
 
     @PositiveOrZero(message = "금액은 0원 이상으로 입력해야 합니다.")
     private int amount;
+
+    public static GetBudgetDto of(String categoryName, int amount) {
+        return new GetBudgetDto(categoryName, amount);
+    }
 }

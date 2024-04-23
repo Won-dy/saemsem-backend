@@ -42,4 +42,12 @@ public class BudgetService {
                 }
             });
     }
+
+    public List<GetBudgetDto> getBudgetList(LocalDate date, String userId) {
+        // todo: Budget 의 amount int -> long 으로 바꿀 예정
+        User user = userService.getUserById(userId);
+        return budgetRepository.findByDateAndUser(date, user).stream()
+            .map(projection -> GetBudgetDto.of(projection.getCategoryName(), projection.getAmount().intValue()))
+            .toList();
+    }
 }
