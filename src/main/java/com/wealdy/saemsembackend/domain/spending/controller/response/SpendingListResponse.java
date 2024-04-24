@@ -11,9 +11,9 @@ import lombok.Getter;
 @Getter
 public class SpendingListResponse {
 
-    private long spendingTotal;
-    private List<SpendingSummaryDto> spendingTotalByCategory;
-    private ListResponseDto<SpendingResponse> spendingList;
+    private final long spendingTotal;
+    private final List<SpendingSummaryDto> spendingTotalByCategory;
+    private final ListResponseDto<SpendingResponse> spendingList;
 
     public static SpendingListResponse of(long spendingTotal, List<SpendingSummaryDto> spendingTotalByCategory,
         ListResponseDto<SpendingResponse> spendingList) {

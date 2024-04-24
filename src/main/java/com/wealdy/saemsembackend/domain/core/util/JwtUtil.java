@@ -44,7 +44,7 @@ public class JwtUtil {
                 .build().parseSignedClaims(token);
             Claims claims = claimsJws.getPayload();
 
-            return new JWTDto(claims.get(USER_ID_KEY, Long.class), claims.getExpiration(), claims.getIssuedAt(), token);
+            return JWTDto.of(claims.get(USER_ID_KEY, Long.class), claims.getExpiration(), claims.getIssuedAt(), token);
         } catch (ExpiredJwtException ex) {
             throw new ExpiredTokenException();
         } catch (JwtException ex) {

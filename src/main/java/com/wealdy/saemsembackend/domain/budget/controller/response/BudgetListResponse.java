@@ -11,8 +11,8 @@ import lombok.Getter;
 @Getter
 public class BudgetListResponse {
 
-    private LocalDate date;
-    private List<GetBudgetDto> budgets;
+    private final LocalDate date;
+    private final List<GetBudgetDto> budgets;
 
     public static BudgetListResponse of(LocalDate date, List<GetBudgetDto> budgets) {
         return new BudgetListResponse(date, budgets);

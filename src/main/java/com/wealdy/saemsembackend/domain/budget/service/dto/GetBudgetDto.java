@@ -11,10 +11,10 @@ import lombok.Getter;
 public class GetBudgetDto {
 
     @NotBlank(message = "카테고리는 필수 값입니다.")
-    private String categoryName;
+    private final String categoryName;
 
     @PositiveOrZero(message = "금액은 0원 이상으로 입력해야 합니다.")
-    private long amount;
+    private final long amount;
 
     public static GetBudgetDto of(String categoryName, long amount) {
         return new GetBudgetDto(categoryName, amount);

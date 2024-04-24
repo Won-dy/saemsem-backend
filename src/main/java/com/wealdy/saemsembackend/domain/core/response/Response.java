@@ -6,6 +6,7 @@ import lombok.Getter;
 public class Response<T> {
 
     public static final Response<Void> OK = new Response<>();
+//    public static final Response<Void> OK2 = Response.of(null);
 
     private final boolean success = true;
     private final int code = ResponseCode.SUCCESS.getCode();

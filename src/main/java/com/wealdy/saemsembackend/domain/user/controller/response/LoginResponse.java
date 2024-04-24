@@ -8,7 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class LoginResponse {
 
-    private String accessToken;
+    private final String accessToken;
 
     public static LoginResponse from(GetLoginDto getLoginDto) {
         return new LoginResponse(getLoginDto.getAccessToken());

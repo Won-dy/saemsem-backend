@@ -8,8 +8,8 @@ import lombok.Getter;
 @Getter
 public class GetSpendingSummaryDto {
 
-    private String categoryName;
-    private long amount;
+    private final String categoryName;
+    private final long amount;
 
     public static GetSpendingSummaryDto of(String categoryName, long amount) {
         return new GetSpendingSummaryDto(categoryName, amount);
