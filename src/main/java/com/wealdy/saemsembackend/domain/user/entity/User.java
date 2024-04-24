@@ -40,7 +40,7 @@ public class User {
     @ColumnDefault("'N'")
     @Column(nullable = false, length = 1)
     @Enumerated(EnumType.STRING)
-    private YnColumn isDeleted;  // 삭제 여부
+    private YnColumn deletedYn;  // 삭제 여부
 
     @CreationTimestamp
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
