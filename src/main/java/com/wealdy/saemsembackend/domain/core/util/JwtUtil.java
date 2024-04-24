@@ -13,11 +13,22 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
 import javax.crypto.SecretKey;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwtUtil {
 
+    private static class JwtUtilProvider {
+
+        private static final JwtUtil INSTANCE = new JwtUtil();
+    }
+
+    public static JwtUtil getInstance() {
+        return JwtUtilProvider.INSTANCE;
+    }
+
     private final static String secret = "djtyS5dopy5dfNt9dfgPmwch5d6klsg0sdlk1kYDgp";
-    private final static String PREFIX_BEARER = "Bearer ";
     private final static int ACCESS_TOKEN_EXPIRATION = 86400;  // 1 DAY
 
     public String createAccessToken(long userId) {
@@ -34,8 +45,7 @@ public class JwtUtil {
             .compact();
     }
 
-    public JWTDto parseToken(String tokenString) {
-        String token = removePrefix(tokenString);
+    public JWTDto parseToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
 
         try {
@@ -50,12 +60,5 @@ public class JwtUtil {
         } catch (JwtException ex) {
             throw new InvalidTokenException();
         }
-    }
-
-    private String removePrefix(String token) {
-        if (token.startsWith(PREFIX_BEARER)) {
-            return token.substring(7);
-        }
-        return token;
     }
 }

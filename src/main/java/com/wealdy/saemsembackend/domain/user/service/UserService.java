@@ -44,8 +44,8 @@ public class UserService {
         User user = userRepository.findByLoginIdAndPassword(id, password)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND_USER));
 
-        JwtUtil jwtUtil = new JwtUtil();
         Long userId = user.getId();
+        JwtUtil jwtUtil = JwtUtil.getInstance();
         String accessToken = jwtUtil.createAccessToken(userId);
         return new GetLoginDto(accessToken);
     }
