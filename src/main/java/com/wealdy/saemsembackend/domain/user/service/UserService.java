@@ -41,8 +41,8 @@ public class UserService {
     }
 
     @Transactional
-    public GetLoginDto login(String id, String password) {
-        User user = userRepository.findByLoginIdAndPassword(id, password)
+    public GetLoginDto login(String loginId, String password) {
+        User user = userRepository.findByLoginIdAndPassword(loginId, password)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND_USER));
 
         Long userId = user.getId();
