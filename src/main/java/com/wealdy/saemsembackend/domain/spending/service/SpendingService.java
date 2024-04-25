@@ -53,6 +53,7 @@ public class SpendingService {
         return GetSpendingDto.from(spending);
     }
 
+    @Transactional(readOnly = true)
     public List<GetSpendingDto> getSpendingList(
         LocalDate startDate,
         LocalDate endDate,
@@ -71,6 +72,7 @@ public class SpendingService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<GetSpendingSummaryDto> getSumOfAmountByCategory(
         LocalDate startDate,
         LocalDate endDate,
@@ -89,6 +91,7 @@ public class SpendingService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
     public long getSumOfAmountByDate(
         LocalDate startDate,
         LocalDate endDate,

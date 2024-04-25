@@ -44,6 +44,7 @@ public class BudgetService {
             });
     }
 
+    @Transactional(readOnly = true)
     public List<GetBudgetDto> getBudgetList(LocalDate date, String userId) {
         User user = userService.getUserById(userId);
         return budgetRepository.findByDateAndUser(date, user).stream()

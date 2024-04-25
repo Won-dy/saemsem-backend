@@ -40,6 +40,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public GetLoginDto login(String id, String password) {
         User user = userRepository.findByLoginIdAndPassword(id, password)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND_USER));
@@ -50,6 +51,7 @@ public class UserService {
         return new GetLoginDto(accessToken);
     }
 
+    @Transactional(readOnly = true)
     public User getUserById(String userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
