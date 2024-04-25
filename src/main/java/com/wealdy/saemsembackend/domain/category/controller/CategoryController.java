@@ -2,7 +2,6 @@ package com.wealdy.saemsembackend.domain.category.controller;
 
 import com.wealdy.saemsembackend.domain.category.controller.response.CategoryListResponse;
 import com.wealdy.saemsembackend.domain.category.service.CategoryService;
-import com.wealdy.saemsembackend.domain.core.response.ListResponseDto;
 import com.wealdy.saemsembackend.domain.core.response.Response;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +20,11 @@ public class CategoryController {
      * 카테고리 목록 조회 API
      */
     @GetMapping
-    public Response<ListResponseDto<CategoryListResponse>> getCategoryList() {
+    public Response<List<CategoryListResponse>> getCategoryList() {
         List<CategoryListResponse> categories = categoryService.getCategoryList().stream()
             .map(CategoryListResponse::from)
             .toList();
 
-        return Response.of(ListResponseDto.from(categories));
+        return Response.of(categories);
     }
 }
