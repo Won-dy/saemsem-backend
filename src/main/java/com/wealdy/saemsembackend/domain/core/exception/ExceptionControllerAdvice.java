@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.util.List;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,7 +35,7 @@ public class ExceptionControllerAdvice {
             }
         }
         LogUtils.errorLog(request, exception);
-        return new ErrorResponseDto(ResponseCode.BAD_REQUEST.getCode(), ResponseCode.INVALID_PARAMETER.getCode(), errorMessage);
+        return new ErrorResponseDto(HttpStatus.BAD_REQUEST.value(), ResponseCode.INVALID_PARAMETER.getCode(), errorMessage);
     }
 
     @ExceptionHandler(ExceptionBase.class)
