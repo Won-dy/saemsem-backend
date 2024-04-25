@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class DateUtils {
 
-    public static LocalDate convertFirstDayOfMonth(String date) {
-        return LocalDate.parse(date + "-01");
+    public static LocalDate convertFirstDayOfMonth(int year, int month) {
+        return LocalDate.of(year, month, 1);
     }
 }
