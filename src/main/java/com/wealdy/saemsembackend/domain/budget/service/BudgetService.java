@@ -29,17 +29,18 @@ public class BudgetService {
                 User user = userService.getUserById(userId);
                 Category category = categoryService.getCategory(getBudgetDto.getCategoryName());
                 Optional<Budget> findBudget = budgetRepository.findByDateAndCategoryAndUser(date, category, user);
-                if (findBudget.isEmpty()) {
-                    Budget budget = Budget.createBudget(
-                        date,
-                        getBudgetDto.getAmount(),
-                        user,
-                        category
-                    );
-                    budgetRepository.save(budget);
-                } else {
-                    findBudget.get().updateBudget(getBudgetDto.getAmount());
-                }
+                findBudget.ifPresentOrElse(
+                    budget -> budget.updateBudget(getBudgetDto.getAmount()),
+                    () -> {
+                        Budget budget = Budget.createBudget(
+                            date,
+                            getBudgetDto.getAmount(),
+                            user,
+                            category
+                        );
+                        budgetRepository.save(budget);
+                    }
+                );
             });
     }
 
