@@ -1,5 +1,6 @@
 package com.wealdy.saemsembackend.domain.budget.service;
 
+import com.wealdy.saemsembackend.domain.budget.service.dto.BudgetSummaryDto;
 import com.wealdy.saemsembackend.domain.budget.entity.Budget;
 import com.wealdy.saemsembackend.domain.budget.repository.BudgetRepository;
 import com.wealdy.saemsembackend.domain.budget.service.dto.GetBudgetDto;
@@ -23,7 +24,7 @@ public class BudgetService {
     private final UserService userService;
 
     @Transactional
-    public void createBudget(LocalDate date, List<GetBudgetDto> getBudgetDtoList, String userId) {
+    public void createBudget(LocalDate date, List<BudgetSummaryDto> getBudgetDtoList, String userId) {
         getBudgetDtoList
             .forEach(getBudgetDto -> {
                 User user = userService.getUserById(userId);

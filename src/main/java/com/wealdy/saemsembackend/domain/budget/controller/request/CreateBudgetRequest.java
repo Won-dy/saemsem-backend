@@ -1,6 +1,6 @@
 package com.wealdy.saemsembackend.domain.budget.controller.request;
 
-import com.wealdy.saemsembackend.domain.budget.service.dto.GetBudgetDto;
+import com.wealdy.saemsembackend.domain.budget.service.dto.BudgetSummaryDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
@@ -18,5 +18,5 @@ public class CreateBudgetRequest {
     private int month;
 
     @NotEmpty(message = "예산은 필수 값입니다.")
-    private List<@Valid GetBudgetDto> budgets;
+    private List<@Valid BudgetSummaryDto> budgets;
 }
