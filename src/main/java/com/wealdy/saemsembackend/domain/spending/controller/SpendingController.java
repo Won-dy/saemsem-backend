@@ -7,6 +7,7 @@ import com.wealdy.saemsembackend.domain.core.response.ListResponseDto;
 import com.wealdy.saemsembackend.domain.core.response.Response;
 import com.wealdy.saemsembackend.domain.spending.controller.dto.SpendingSummaryDto;
 import com.wealdy.saemsembackend.domain.spending.controller.request.SaveSpendingRequest;
+import com.wealdy.saemsembackend.domain.spending.controller.request.UpdateExcludeRequest;
 import com.wealdy.saemsembackend.domain.spending.controller.response.SpendingListResponse;
 import com.wealdy.saemsembackend.domain.spending.controller.response.SpendingResponse;
 import com.wealdy.saemsembackend.domain.spending.service.SpendingService;
@@ -38,7 +39,10 @@ public class SpendingController {
     private final SpendingService spendingService;
 
     @PostMapping
-    public Response<IdResponseDto> createSpending(@Valid @RequestBody SaveSpendingRequest request, @RequestAttribute(name = USER_ID_KEY) String userId) {
+    public Response<IdResponseDto> createSpending(
+        @Valid @RequestBody SaveSpendingRequest request,
+        @RequestAttribute(name = USER_ID_KEY) String userId
+    ) {
         Long spendingId = spendingService.createSpending(
             LocalDateTime.parse(request.getDate()),
             request.getAmount(),
@@ -96,6 +100,17 @@ public class SpendingController {
             request.getCategoryName(),
             userId
         );
+
+        return Response.of(IdResponseDto.from(spendingId));
+    }
+
+    @PutMapping("/exclude/{spendingId}")
+    public Response<IdResponseDto> updateExclude(
+        @PathVariable Long spendingId,
+        @Valid @RequestBody UpdateExcludeRequest request,
+        @RequestAttribute(name = USER_ID_KEY) String userId
+    ) {
+        spendingService.updateExclude(spendingId, request.getExcludeTotal(), userId);
 
         return Response.of(IdResponseDto.from(spendingId));
     }

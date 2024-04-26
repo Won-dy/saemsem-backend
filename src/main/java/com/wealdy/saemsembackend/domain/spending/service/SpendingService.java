@@ -47,6 +47,14 @@ public class SpendingService {
         spending.updateSpending(date, amount, memo, excludeTotal, category);
     }
 
+    @Transactional
+    public void updateExclude(Long spendingId, boolean excludeTotal, String userId) {
+        User user = userService.getUserById(userId);
+
+        Spending spending = getSpending(spendingId, user);
+        spending.updateExclude(excludeTotal);
+    }
+
     public GetSpendingDto getSpending(Long spendingId, String userId) {
         User user = userService.getUserById(userId);
         Spending spending = getSpending(spendingId, user);

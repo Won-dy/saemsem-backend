@@ -78,4 +78,8 @@ public class Spending {
         this.excludeTotal = YnColumn.from(excludeTotal);
         this.category = category;
     }
+
+    public void updateExclude(boolean excludeTotal) {
+        this.excludeTotal = YnColumn.from(excludeTotal);
+    }
 }
