@@ -6,8 +6,9 @@ import com.wealdy.saemsembackend.domain.core.response.IdResponseDto;
 import com.wealdy.saemsembackend.domain.core.response.ListResponseDto;
 import com.wealdy.saemsembackend.domain.core.response.Response;
 import com.wealdy.saemsembackend.domain.spending.controller.dto.SpendingSummaryDto;
-import com.wealdy.saemsembackend.domain.spending.controller.request.SaveSpendingRequest;
+import com.wealdy.saemsembackend.domain.spending.controller.request.CreateSpendingRequest;
 import com.wealdy.saemsembackend.domain.spending.controller.request.UpdateExcludeRequest;
+import com.wealdy.saemsembackend.domain.spending.controller.request.UpdateSpendingRequest;
 import com.wealdy.saemsembackend.domain.spending.controller.response.SpendingListResponse;
 import com.wealdy.saemsembackend.domain.spending.controller.response.SpendingResponse;
 import com.wealdy.saemsembackend.domain.spending.service.SpendingService;
@@ -40,7 +41,7 @@ public class SpendingController {
 
     @PostMapping
     public Response<IdResponseDto> createSpending(
-        @Valid @RequestBody SaveSpendingRequest request,
+        @Valid @RequestBody CreateSpendingRequest request,
         @RequestAttribute(name = USER_ID_KEY) String userId
     ) {
         Long spendingId = spendingService.createSpending(
@@ -88,7 +89,7 @@ public class SpendingController {
     @PutMapping("/{spendingId}")
     public Response<IdResponseDto> update(
         @PathVariable Long spendingId,
-        @Valid @RequestBody SaveSpendingRequest request,
+        @Valid @RequestBody UpdateSpendingRequest request,
         @RequestAttribute(name = USER_ID_KEY) String userId
     ) {
         spendingService.updateSpending(
@@ -96,7 +97,6 @@ public class SpendingController {
             LocalDateTime.parse(request.getDate()),
             request.getAmount(),
             request.getMemo(),
-            request.isExcludeTotal(),
             request.getCategoryName(),
             userId
         );

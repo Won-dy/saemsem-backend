@@ -38,13 +38,13 @@ public class SpendingService {
 
     @Transactional
     public void updateSpending(
-        Long spendingId, LocalDateTime date, long amount, String memo, boolean excludeTotal, String categoryName, String userId
+        Long spendingId, LocalDateTime date, long amount, String memo, String categoryName, String userId
     ) {
         User user = userService.getUserById(userId);
         Category category = categoryService.getCategory(categoryName);
 
         Spending spending = getSpending(spendingId, user);
-        spending.updateSpending(date, amount, memo, excludeTotal, category);
+        spending.updateSpending(date, amount, memo, category);
     }
 
     @Transactional
