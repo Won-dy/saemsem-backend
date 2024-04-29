@@ -12,6 +12,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
+import java.util.Objects;
 import javax.crypto.SecretKey;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -19,13 +20,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwtUtil {
 
-    private static class JwtUtilProvider {
-
-        private static final JwtUtil INSTANCE = new JwtUtil();
-    }
+    private static JwtUtil instance;
 
     public static JwtUtil getInstance() {
-        return JwtUtilProvider.INSTANCE;
+        if (Objects.isNull(instance)) {
+            instance = new JwtUtil();
+        }
+        return instance;
     }
 
     private final static String secret = "djtyS5dopy5dfNt9dfgPmwch5d6klsg0sdlk1kYDgp";
