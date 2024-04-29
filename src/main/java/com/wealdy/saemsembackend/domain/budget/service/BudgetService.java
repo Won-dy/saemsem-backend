@@ -1,8 +1,8 @@
 package com.wealdy.saemsembackend.domain.budget.service;
 
-import com.wealdy.saemsembackend.domain.budget.service.dto.BudgetSummaryDto;
 import com.wealdy.saemsembackend.domain.budget.entity.Budget;
 import com.wealdy.saemsembackend.domain.budget.repository.BudgetRepository;
+import com.wealdy.saemsembackend.domain.budget.service.dto.BudgetSummaryDto;
 import com.wealdy.saemsembackend.domain.budget.service.dto.GetBudgetDto;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.category.service.CategoryService;
@@ -29,20 +29,28 @@ public class BudgetService {
             .forEach(getBudgetDto -> {
                 User user = userService.getUserById(userId);
                 Category category = categoryService.getCategory(getBudgetDto.getCategoryName());
-                Optional<Budget> findBudget = budgetRepository.findByDateAndCategoryAndUser(date, category, user);
-                findBudget.ifPresentOrElse(
-                    budget -> budget.updateBudget(getBudgetDto.getAmount()),
-                    () -> {
-                        Budget budget = Budget.createBudget(
-                            date,
-                            getBudgetDto.getAmount(),
-                            user,
-                            category
-                        );
-                        budgetRepository.save(budget);
-                    }
-                );
+                Optional<Budget> findBudget = findBudget(date, user, category);
+                createBudget(date, getBudgetDto, user, category, findBudget);
             });
+    }
+
+    private void createBudget(LocalDate date, BudgetSummaryDto getBudgetDto, User user, Category category, Optional<Budget> findBudget) {
+        findBudget.ifPresentOrElse(
+            budget -> budget.updateBudget(getBudgetDto.getAmount()),
+            () -> {
+                Budget budget = Budget.createBudget(
+                    date,
+                    getBudgetDto.getAmount(),
+                    user,
+                    category
+                );
+                budgetRepository.save(budget);
+            }
+        );
+    }
+
+    private Optional<Budget> findBudget(LocalDate date, User user, Category category) {
+        return budgetRepository.findByDateAndCategoryAndUser(date, category, user);
     }
 
     @Transactional(readOnly = true)

@@ -24,8 +24,7 @@ public class UserService {
         validateDuplicateId(loginId);
         validateDuplicateNickname(nickname);
 
-        User newUser = User.createUser(loginId, password, nickname);
-        userRepository.save(newUser);
+        createUser(loginId, password, nickname);
     }
 
     private void validateDuplicateId(String loginId) {
@@ -38,6 +37,11 @@ public class UserService {
         if (userRepository.findByNickname(nickname).isPresent()) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST_NICKNAME);
         }
+    }
+
+    private void createUser(String loginId, String password, String nickname) {
+        User newUser = User.createUser(loginId, password, nickname);
+        userRepository.save(newUser);
     }
 
     @Transactional
