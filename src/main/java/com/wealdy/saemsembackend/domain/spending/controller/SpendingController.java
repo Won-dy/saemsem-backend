@@ -78,7 +78,7 @@ public class SpendingController {
                 .map(SpendingResponse::from)
                 .toList());
         long sumOfAmount = spendingService.getSumOfAmountByDate(startLocalDate, endLocalDate, category, minAmount, maxAmount, userId);
-        List<SpendingSummaryDto> sumOfAmountByCategory =
+        final List<SpendingSummaryDto> sumOfAmountByCategory =
             spendingService.getSumOfAmountByCategory(startLocalDate, endLocalDate, category, minAmount, maxAmount, userId).stream()
                 .map(SpendingSummaryDto::from)
                 .toList();

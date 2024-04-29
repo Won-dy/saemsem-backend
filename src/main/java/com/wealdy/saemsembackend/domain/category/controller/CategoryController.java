@@ -21,7 +21,7 @@ public class CategoryController {
      */
     @GetMapping
     public Response<List<CategoryListResponse>> getCategoryList() {
-        List<CategoryListResponse> categories = categoryService.getCategoryList().stream()
+        final List<CategoryListResponse> categories = categoryService.getCategoryList().stream()
             .map(CategoryListResponse::from)
             .toList();
 
