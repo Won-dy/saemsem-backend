@@ -24,10 +24,10 @@ public class BudgetService {
     private final UserService userService;
 
     @Transactional
-    public void createBudget(LocalDate date, List<BudgetSummaryDto> getBudgetDtoList, String userId) {
+    public void createBudget(LocalDate date, List<BudgetSummaryDto> getBudgetDtoList, String loginId) {
         getBudgetDtoList
             .forEach(getBudgetDto -> {
-                User user = userService.getUserById(userId);
+                User user = userService.getUser(loginId);
                 Category category = categoryService.getCategory(getBudgetDto.getCategoryName());
                 Optional<Budget> findBudget = findBudget(date, user, category);
                 createBudget(date, getBudgetDto, user, category, findBudget);
@@ -54,8 +54,8 @@ public class BudgetService {
     }
 
     @Transactional(readOnly = true)
-    public List<GetBudgetDto> getBudgetList(LocalDate date, String userId) {
-        User user = userService.getUserById(userId);
+    public List<GetBudgetDto> getBudgetList(LocalDate date, String loginId) {
+        User user = userService.getUser(loginId);
         return budgetRepository.findByDateAndUser(date, user).stream()
             .map(projection -> GetBudgetDto.of(projection.getCategoryName(), projection.getAmount()))
             .toList();

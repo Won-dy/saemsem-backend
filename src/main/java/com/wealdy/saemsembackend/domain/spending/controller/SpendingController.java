@@ -1,6 +1,6 @@
 package com.wealdy.saemsembackend.domain.spending.controller;
 
-import static com.wealdy.saemsembackend.domain.core.Constant.USER_ID_KEY;
+import static com.wealdy.saemsembackend.domain.core.Constant.LOGIN_ID_KEY;
 
 import com.wealdy.saemsembackend.domain.core.response.IdResponseDto;
 import com.wealdy.saemsembackend.domain.core.response.ListResponseDto;
@@ -42,7 +42,7 @@ public class SpendingController {
     @PostMapping
     public Response<IdResponseDto> createSpending(
         @Valid @RequestBody CreateSpendingRequest request,
-        @RequestAttribute(name = USER_ID_KEY) String userId
+        @RequestAttribute(name = LOGIN_ID_KEY) String loginId
     ) {
         Long spendingId = spendingService.createSpending(
             LocalDateTime.parse(request.getDate()),
@@ -50,15 +50,15 @@ public class SpendingController {
             request.getMemo(),
             request.isExcludeTotal(),
             request.getCategoryName(),
-            userId
+            loginId
         );
 
         return Response.of(IdResponseDto.from(spendingId));
     }
 
     @GetMapping("/{spendingId}")
-    public Response<SpendingResponse> getSpending(@PathVariable Long spendingId, @RequestAttribute(name = USER_ID_KEY) String userId) {
-        return Response.of(SpendingResponse.from(spendingService.getSpending(spendingId, userId)));
+    public Response<SpendingResponse> getSpending(@PathVariable Long spendingId, @RequestAttribute(name = LOGIN_ID_KEY) String loginId) {
+        return Response.of(SpendingResponse.from(spendingService.getSpending(spendingId, loginId)));
     }
 
     @GetMapping
@@ -68,18 +68,18 @@ public class SpendingController {
         @RequestParam(required = false) List<String> category,
         @RequestParam(required = false) @PositiveOrZero(message = "금액은 0원 이상으로 입력해야 합니다.") Long minAmount,
         @RequestParam(required = false) @PositiveOrZero(message = "금액은 0원 이상으로 입력해야 합니다.") Long maxAmount,
-        @RequestAttribute(name = USER_ID_KEY) String userId
+        @RequestAttribute(name = LOGIN_ID_KEY) String loginId
     ) {
         LocalDate startLocalDate = LocalDate.parse(startDate);
         LocalDate endLocalDate = LocalDate.parse(endDate);
 
         ListResponseDto<SpendingResponse> spendingList = ListResponseDto.from(
-            spendingService.getSpendingList(startLocalDate, endLocalDate, category, minAmount, maxAmount, userId).stream()
+            spendingService.getSpendingList(startLocalDate, endLocalDate, category, minAmount, maxAmount, loginId).stream()
                 .map(SpendingResponse::from)
                 .toList());
-        long sumOfAmount = spendingService.getSumOfAmountByDate(startLocalDate, endLocalDate, category, minAmount, maxAmount, userId);
+        long sumOfAmount = spendingService.getSumOfAmountByDate(startLocalDate, endLocalDate, category, minAmount, maxAmount, loginId);
         final List<SpendingSummaryDto> sumOfAmountByCategory =
-            spendingService.getSumOfAmountByCategory(startLocalDate, endLocalDate, category, minAmount, maxAmount, userId).stream()
+            spendingService.getSumOfAmountByCategory(startLocalDate, endLocalDate, category, minAmount, maxAmount, loginId).stream()
                 .map(SpendingSummaryDto::from)
                 .toList();
 
@@ -90,7 +90,7 @@ public class SpendingController {
     public Response<IdResponseDto> update(
         @PathVariable Long spendingId,
         @Valid @RequestBody UpdateSpendingRequest request,
-        @RequestAttribute(name = USER_ID_KEY) String userId
+        @RequestAttribute(name = LOGIN_ID_KEY) String loginId
     ) {
         spendingService.updateSpending(
             spendingId,
@@ -98,7 +98,7 @@ public class SpendingController {
             request.getAmount(),
             request.getMemo(),
             request.getCategoryName(),
-            userId
+            loginId
         );
 
         return Response.of(IdResponseDto.from(spendingId));
@@ -108,16 +108,16 @@ public class SpendingController {
     public Response<IdResponseDto> updateExclude(
         @PathVariable Long spendingId,
         @Valid @RequestBody UpdateExcludeRequest request,
-        @RequestAttribute(name = USER_ID_KEY) String userId
+        @RequestAttribute(name = LOGIN_ID_KEY) String loginId
     ) {
-        spendingService.updateExclude(spendingId, request.getExcludeTotal(), userId);
+        spendingService.updateExclude(spendingId, request.getExcludeTotal(), loginId);
 
         return Response.of(IdResponseDto.from(spendingId));
     }
 
     @DeleteMapping("/{spendingId}")
-    public Response<Void> deleteSpending(@PathVariable Long spendingId, @RequestAttribute(name = USER_ID_KEY) String userId) {
-        spendingService.deleteSpending(spendingId, userId);
+    public Response<Void> deleteSpending(@PathVariable Long spendingId, @RequestAttribute(name = LOGIN_ID_KEY) String loginId) {
+        spendingService.deleteSpending(spendingId, loginId);
         return Response.OK;
     }
 }

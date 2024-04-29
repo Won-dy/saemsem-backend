@@ -18,16 +18,6 @@ public class UserRepository {
         em.persist(user);
     }
 
-    public Optional<User> findById(String id) {
-        TypedQuery<User> query = em.createQuery("select u from User u where u.id = :id", User.class)
-            .setParameter("id", id);
-        try {
-            return Optional.ofNullable(query.getSingleResult());
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
-    }
-
     public Optional<User> findByLoginId(String id) {
         TypedQuery<User> query = em.createQuery("select u from User u where u.loginId = :id", User.class)
             .setParameter("id", id);

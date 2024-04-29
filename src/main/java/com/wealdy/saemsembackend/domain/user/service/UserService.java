@@ -46,18 +46,17 @@ public class UserService {
 
     @Transactional
     public GetLoginDto login(String loginId, String password) {
-        User user = userRepository.findByLoginIdAndPassword(loginId, password)
+        userRepository.findByLoginIdAndPassword(loginId, password)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND_USER));
 
-        Long userId = user.getId();
         JwtUtil jwtUtil = JwtUtil.getInstance();
-        String accessToken = jwtUtil.createAccessToken(userId);
+        String accessToken = jwtUtil.createAccessToken(loginId);
         return new GetLoginDto(accessToken);
     }
 
     @Transactional(readOnly = true)
-    public User getUserById(String userId) {
-        return userRepository.findById(userId)
+    public User getUser(String loginId) {
+        return userRepository.findByLoginId(loginId)
             .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
     }
 }

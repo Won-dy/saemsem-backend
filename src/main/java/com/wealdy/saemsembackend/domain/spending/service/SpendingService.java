@@ -28,8 +28,8 @@ public class SpendingService {
     private final UserService userService;
 
     @Transactional
-    public Long createSpending(LocalDateTime date, long amount, String memo, boolean excludeTotal, String categoryName, String userId) {
-        User user = userService.getUserById(userId);
+    public Long createSpending(LocalDateTime date, long amount, String memo, boolean excludeTotal, String categoryName, String loginId) {
+        User user = userService.getUser(loginId);
         Category category = categoryService.getCategory(categoryName);
 
         Spending spending = createSpending(date, amount, memo, excludeTotal, user, category);
@@ -43,9 +43,9 @@ public class SpendingService {
 
     @Transactional
     public void updateSpending(
-        Long spendingId, LocalDateTime date, long amount, String memo, String categoryName, String userId
+        Long spendingId, LocalDateTime date, long amount, String memo, String categoryName, String loginId
     ) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUser(loginId);
         Category category = categoryService.getCategory(categoryName);
 
         Spending spending = getSpending(spendingId, user);
@@ -53,15 +53,15 @@ public class SpendingService {
     }
 
     @Transactional
-    public void updateExclude(Long spendingId, boolean excludeTotal, String userId) {
-        User user = userService.getUserById(userId);
+    public void updateExclude(Long spendingId, boolean excludeTotal, String loginId) {
+        User user = userService.getUser(loginId);
 
         Spending spending = getSpending(spendingId, user);
         spending.updateExclude(excludeTotal);
     }
 
-    public GetSpendingDto getSpending(Long spendingId, String userId) {
-        User user = userService.getUserById(userId);
+    public GetSpendingDto getSpending(Long spendingId, String loginId) {
+        User user = userService.getUser(loginId);
         Spending spending = getSpending(spendingId, user);
         return GetSpendingDto.from(spending);
     }
@@ -73,9 +73,9 @@ public class SpendingService {
         List<String> category,
         Long minAmount,
         Long maxAmount,
-        String userId
+        String loginId
     ) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUser(loginId);
 
         LocalDateTime startDateTime = getStartDateTime(startDate);
         LocalDateTime endDateTime = getEndDateTime(endDate);
@@ -92,14 +92,16 @@ public class SpendingService {
         List<String> category,
         Long minAmount,
         Long maxAmount,
-        String userId
+        String loginId
     ) {
+        User user = userService.getUser(loginId);
+
         LocalDateTime startDateTime = getStartDateTime(startDate);
         LocalDateTime endDateTime = getEndDateTime(endDate);
 
         int categorySize = (category != null) ? category.size() : 0;
 
-        return spendingRepository.getSumOfAmountByCategory(startDateTime, endDateTime, categorySize, category, minAmount, maxAmount, userId).stream()
+        return spendingRepository.getSumOfAmountByCategory(startDateTime, endDateTime, categorySize, category, minAmount, maxAmount, user.getId()).stream()
             .map(projection -> GetSpendingSummaryDto.of(projection.getCategoryName(), projection.getAmount()))
             .toList();
     }
@@ -111,9 +113,9 @@ public class SpendingService {
         List<String> category,
         Long minAmount,
         Long maxAmount,
-        String userId
+        String loginId
     ) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUser(loginId);
 
         LocalDateTime startDateTime = getStartDateTime(startDate);
         LocalDateTime endDateTime = getEndDateTime(endDate);
@@ -122,8 +124,8 @@ public class SpendingService {
     }
 
     @Transactional
-    public void deleteSpending(Long spendingId, String userId) {
-        User user = userService.getUserById(userId);
+    public void deleteSpending(Long spendingId, String loginId) {
+        User user = userService.getUser(loginId);
         Spending spending = getSpending(spendingId, user);
         spendingRepository.delete(spending);
     }

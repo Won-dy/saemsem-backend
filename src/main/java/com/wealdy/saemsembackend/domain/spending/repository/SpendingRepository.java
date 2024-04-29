@@ -65,6 +65,6 @@ public interface SpendingRepository extends JpaRepository<Spending, Long>, JpaSp
         @Param("category") List<String> category,
         @Param("minAmount") Long minAmount,
         @Param("maxAmount") Long maxAmount,
-        @Param("userId") String userId
+        @Param("userId") Long userId
     );
 }
