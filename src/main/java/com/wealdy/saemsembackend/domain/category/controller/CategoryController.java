@@ -2,16 +2,16 @@ package com.wealdy.saemsembackend.domain.category.controller;
 
 import com.wealdy.saemsembackend.domain.category.controller.response.CategoryListResponse;
 import com.wealdy.saemsembackend.domain.category.service.CategoryService;
-import com.wealdy.saemsembackend.domain.core.response.ListResponseDto;
 import com.wealdy.saemsembackend.domain.core.response.Response;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -19,12 +19,12 @@ public class CategoryController {
     /**
      * 카테고리 목록 조회 API
      */
-    @GetMapping("/category")
-    public Response<ListResponseDto<CategoryListResponse>> getCategories() {
-        List<CategoryListResponse> categories = categoryService.getCategories().stream()
+    @GetMapping
+    public Response<List<CategoryListResponse>> getCategoryList() {
+        List<CategoryListResponse> categories = categoryService.getCategoryList().stream()
             .map(CategoryListResponse::from)
-            .collect(Collectors.toList());
+            .toList();
 
-        return Response.of(ListResponseDto.from(categories));
+        return Response.of(categories);
     }
 }

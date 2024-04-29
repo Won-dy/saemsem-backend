@@ -8,8 +8,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CategoryListResponse {
 
-    private Long id;
-    private String name;
+    private final Long id;
+    private final String name;
 
     public static CategoryListResponse from(GetCategoryDto category) {
         return new CategoryListResponse(category.getId(), category.getName());

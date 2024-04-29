@@ -8,8 +8,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class GetCategoryDto {
 
-    private Long id;
-    private String name;
+    private final Long id;
+    private final String name;
 
     public static GetCategoryDto from(Category category) {
         return new GetCategoryDto(category.getId(), category.getName());

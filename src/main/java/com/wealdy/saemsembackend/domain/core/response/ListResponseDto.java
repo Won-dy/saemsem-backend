@@ -8,8 +8,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ListResponseDto<T> {
 
-    private long total;
-    private List<T> list;
+    private final long total;
+    private final List<T> list;
 
     public static <T> ListResponseDto<T> of(long total, List<T> list) {
         return new ListResponseDto<>(total, list);

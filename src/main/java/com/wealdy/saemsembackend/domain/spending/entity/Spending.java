@@ -33,12 +33,12 @@ public class Spending {
     private LocalDateTime date;  // 지출일시
 
     @Column(nullable = false)
-    private int amount;  // 금액
+    private long amount;  // 금액
 
     @Column(length = 200)
     private String memo;  // 메모
 
-    @ColumnDefault("N")
+    @ColumnDefault("'N'")
     @Column(nullable = false, length = 1)
     @Enumerated(EnumType.STRING)
     private YnColumn excludeTotal;  // 지출 합계 제외 여부
@@ -51,16 +51,16 @@ public class Spending {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;  // 카테고리
 
-    private Spending(LocalDateTime date, int amount, String memo, boolean excludeTotal, User user, Category category) {
+    private Spending(LocalDateTime date, long amount, String memo, boolean excludeTotal, User user, Category category) {
         this.date = date;
         this.amount = amount;
         this.memo = memo;
-        this.excludeTotal = YnColumn.fromBoolean(excludeTotal);
+        this.excludeTotal = YnColumn.from(excludeTotal);
         this.user = user;
         this.category = category;
     }
 
-    public static Spending createSpending(LocalDateTime date, int amount, String memo, boolean excludeTotal, User user, Category category) {
+    public static Spending createSpending(LocalDateTime date, long amount, String memo, boolean excludeTotal, User user, Category category) {
         return new Spending(
             date,
             amount,
@@ -69,5 +69,16 @@ public class Spending {
             user,
             category
         );
+    }
+
+    public void updateSpending(LocalDateTime date, long amount, String memo, Category category) {
+        this.date = date;
+        this.amount = amount;
+        this.memo = memo;
+        this.category = category;
+    }
+
+    public void updateExclude(boolean excludeTotal) {
+        this.excludeTotal = YnColumn.from(excludeTotal);
     }
 }

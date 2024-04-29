@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class IdResponseDto {
 
-    private long id;
+    private final long id;
 
     public static IdResponseDto from(long id) {
         return new IdResponseDto(id);

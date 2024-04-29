@@ -12,12 +12,24 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
+import java.util.Objects;
 import javax.crypto.SecretKey;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwtUtil {
 
+    private static JwtUtil instance;
+
+    public static JwtUtil getInstance() {
+        if (Objects.isNull(instance)) {
+            instance = new JwtUtil();
+        }
+        return instance;
+    }
+
     private final static String secret = "djtyS5dopy5dfNt9dfgPmwch5d6klsg0sdlk1kYDgp";
-    private final static String PREFIX_BEARER = "Bearer ";
     private final static int ACCESS_TOKEN_EXPIRATION = 86400;  // 1 DAY
 
     public String createAccessToken(long userId) {
@@ -34,8 +46,7 @@ public class JwtUtil {
             .compact();
     }
 
-    public JWTDto parseToken(String tokenString) {
-        String token = removePrefix(tokenString);
+    public JWTDto parseToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(secret.getBytes());
 
         try {
@@ -44,18 +55,11 @@ public class JwtUtil {
                 .build().parseSignedClaims(token);
             Claims claims = claimsJws.getPayload();
 
-            return new JWTDto(claims.get(USER_ID_KEY, Long.class), claims.getExpiration(), claims.getIssuedAt(), token);
+            return JWTDto.of(claims.get(USER_ID_KEY, Long.class), claims.getExpiration(), claims.getIssuedAt(), token);
         } catch (ExpiredJwtException ex) {
             throw new ExpiredTokenException();
         } catch (JwtException ex) {
             throw new InvalidTokenException();
         }
-    }
-
-    private String removePrefix(String token) {
-        if (token.startsWith(PREFIX_BEARER)) {
-            return token.substring(7);
-        }
-        return token;
     }
 }

@@ -11,12 +11,12 @@ import lombok.Getter;
 @Getter
 public class SpendingResponse {
 
-    private Long id;
-    private String categoryName;
-    private LocalDateTime date;
-    private int amount;
-    private String memo;
-    private YnColumn excludeTotal;
+    private final Long id;
+    private final String categoryName;
+    private final LocalDateTime date;
+    private final long amount;
+    private final String memo;
+    private final YnColumn excludeTotal;
 
     public static SpendingResponse from(GetSpendingDto getSpendingDto) {
         return new SpendingResponse(

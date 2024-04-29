@@ -29,7 +29,7 @@ public class Budget {
     private LocalDate date;  // 예산의 기준 날짜
 
     @Column(nullable = false)
-    private int amount;  // 금액
+    private long amount;  // 금액
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -39,19 +39,19 @@ public class Budget {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;  // 카테고리
 
-    private Budget(LocalDate date, int amount, User user, Category category) {
+    private Budget(LocalDate date, long amount, User user, Category category) {
         this.date = date;
         this.amount = amount;
         this.user = user;
         this.category = category;
     }
 
-    public void updateBudget(int amount) {
+    public void updateBudget(long amount) {
         this.amount = amount;
     }
 
     // 생성 메서드
-    public static Budget createBudget(LocalDate date, int amount, User user, Category category) {
+    public static Budget createBudget(LocalDate date, long amount, User user, Category category) {
         return new Budget(
             date,
             amount,

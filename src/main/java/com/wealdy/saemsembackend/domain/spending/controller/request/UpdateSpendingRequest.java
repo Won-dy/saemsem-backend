@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
-public class CreateSpendingRequest {
+public class UpdateSpendingRequest {
 
     @NotBlank(message = "카테고리는 필수 값입니다.")
     private String categoryName;
@@ -21,6 +21,4 @@ public class CreateSpendingRequest {
 
     @Size(max = 200, message = "메모는 200자까지 입력할 수 있습니다.")
     private String memo;
-
-    private boolean excludeTotal;
 }

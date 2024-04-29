@@ -17,6 +17,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
+    private final static String PREFIX_BEARER = "Bearer ";
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         LogUtils.accessLog(request, "AuthInterceptor#preHandle");
@@ -25,8 +27,9 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        JwtUtil jwtUtil = new JwtUtil();
-        JWTDto jwt = jwtUtil.parseToken(getTokenFromHeader(request));
+        JwtUtil jwtUtil = JwtUtil.getInstance();
+        String token = removePrefix(getTokenFromHeader(request));
+        JWTDto jwt = jwtUtil.parseToken(token);
         request.setAttribute(USER_ID_KEY, jwt.getUserId());
 
         return true;
@@ -40,5 +43,12 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
 
         throw new InvalidTokenException();
+    }
+
+    private String removePrefix(String token) {
+        if (token.startsWith(PREFIX_BEARER)) {
+            return token.substring(7);
+        }
+        return token;
     }
 }
