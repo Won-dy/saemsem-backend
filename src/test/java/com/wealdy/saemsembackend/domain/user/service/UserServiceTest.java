@@ -9,6 +9,7 @@ import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
 import com.wealdy.saemsembackend.domain.user.entity.User;
 import com.wealdy.saemsembackend.domain.user.mock.MockUserRepository;
 import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
+import com.wealdy.saemsembackend.domain.user.service.dto.GetLoginDto;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +58,7 @@ class UserServiceTest {
         );
 
         // then
-        assertThat(alreadyExistException.getCode()).isEqualTo(ResponseCode.ALREADY_EXIST_ID.getCode());
+        assertThat(alreadyExistException.getMessage()).isEqualTo(ResponseCode.ALREADY_EXIST_ID.getMessage());
     }
 
     @DisplayName("[validateDuplicateNickname] 이미 존재하는 닉네임으로 회원가입한다.")
@@ -74,7 +75,57 @@ class UserServiceTest {
         );
 
         // then
-        assertThat(alreadyExistException.getCode()).isEqualTo(ResponseCode.ALREADY_EXIST_NICKNAME.getCode());
+        assertThat(alreadyExistException.getMessage()).isEqualTo(ResponseCode.ALREADY_EXIST_NICKNAME.getMessage());
+    }
+
+    @DisplayName("[login] 로그인을 성공한다.")
+    @Test
+    void login() {
+        // given
+        User user = new User(1L, "loginId", "1234", "nickname", YnColumn.N, null);
+        userRepository.save(user);
+
+        // when
+        GetLoginDto dto = userService.login("loginId", "1234");
+        String accessToken = dto.getAccessToken();
+
+        // then
+        assertThat(accessToken).isNotBlank();
+        assertThat(accessToken.split("\\.").length).isEqualTo(3);
+    }
+
+    @DisplayName("[loginWithNoId] 없는 아이디로 로그인한다.")
+    @Test
+    void loginWithNoId() {
+        // given
+        User user = new User(1L, "loginId", "1234", "nickname", YnColumn.N, null);
+        userRepository.save(user);
+
+        // when
+        NotFoundException notFoundException = Assertions.catchThrowableOfType(
+            () -> userService.login("loginId2", "1234"),
+            NotFoundException.class
+        );
+
+        // then
+        assertThat(notFoundException.getMessage()).isEqualTo(ResponseCode.NOT_FOUND_LOGIN_ID.getMessage());
+    }
+
+    @DisplayName("[loginWithNoPw] 없는 비밀번호로 로그인한다.")
+    @Test
+    void loginWithNoPw() {
+        // given
+        User user = new User(1L, "loginId", "1234", "nickname", YnColumn.N, null);
+        userRepository.save(user);
+
+        // when
+        NotFoundException notFoundException = Assertions.catchThrowableOfType(
+            () -> userService.login("loginId", "1111"),
+            NotFoundException.class
+        );
+
+        // then
+        assertThat(notFoundException.getMessage()).isEqualTo(ResponseCode.NOT_FOUND_PASSWORD.getMessage());
     }
 
     @DisplayName("[getUser] loginId 로 User 조회를 성공한다.")
@@ -105,6 +156,6 @@ class UserServiceTest {
         );
 
         // then
-        assertThat(notFoundException.getCode()).isEqualTo(ResponseCode.NOT_FOUND_USER.getCode());
+        assertThat(notFoundException.getMessage()).isEqualTo(ResponseCode.NOT_FOUND_USER.getMessage());
     }
 }
