@@ -9,8 +9,6 @@ public enum ResponseCode {
 
     SUCCESS(0, "OK"),
 
-    BAD_REQUEST(400, "Bad Request"),
-
     // Http Status Code 400
     INVALID_PARAMETER(1000, "Invalid Parameter"),
     ALREADY_EXIST_ID(2000, "이미 존재하는 아이디입니다."),
@@ -24,6 +22,8 @@ public enum ResponseCode {
     NOT_FOUND_USER(4001, "존재하지 않는 회원입니다."),
     NOT_FOUND_CATEGORY(4002, "존재하지 않는 카테고리입니다."),
     NOT_FOUND_SPENDING(4003, "존재하지 않는 지출입니다."),
+    NOT_FOUND_LOGIN_ID(4004, "존재하지 않는 아이디입니다."),
+    NOT_FOUND_PASSWORD(4005, "비밀번호가 틀립니다."),
 
     // HTTP_CODE 500
     UNKNOWN_ERROR(-1, "Unknown Error");

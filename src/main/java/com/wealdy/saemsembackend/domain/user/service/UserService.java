@@ -46,8 +46,11 @@ public class UserService {
 
     @Transactional
     public GetLoginDto login(String loginId, String password) {
-        userRepository.findByLoginIdAndPassword(loginId, password)
-            .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND_USER));
+        User user = userRepository.findByLoginId(loginId)
+            .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND_LOGIN_ID));
+        if (!(password).equals(user.getPassword())) {
+            throw new NotFoundException(ResponseCode.NOT_FOUND_PASSWORD);
+        }
 
         JwtUtil jwtUtil = JwtUtil.getInstance();
         String accessToken = jwtUtil.createAccessToken(loginId);
