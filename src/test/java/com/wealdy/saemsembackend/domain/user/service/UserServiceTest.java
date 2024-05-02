@@ -45,9 +45,9 @@ class UserServiceTest {
         assertThat(joinUser.get().getNickname()).isEqualTo("nickname");
     }
 
-    @DisplayName("[validateDuplicateId] 이미 존재하는 아이디로 회원가입한다.")
+    @DisplayName("[joinFailedWithDuplicateId] 이미 존재하는 아이디로 회원가입하면 (AlreadyExistException) 발생한다.")
     @Test
-    void validateDuplicateId() {
+    void joinFailedWithDuplicateId() {
         // given
         User user = new User(1L, "loginId", "1234", "nickname", YnColumn.N, null);
         userRepository.save(user);
@@ -62,9 +62,9 @@ class UserServiceTest {
         assertThat(alreadyExistException.getMessage()).isEqualTo(ResponseCode.ALREADY_EXIST_ID.getMessage());
     }
 
-    @DisplayName("[validateDuplicateNickname] 이미 존재하는 닉네임으로 회원가입한다.")
+    @DisplayName("[joinFailedWithDuplicateNickname] 이미 존재하는 닉네임으로 회원가입하면 (AlreadyExistException) 발생한다.")
     @Test
-    void validateDuplicateNickname() {
+    void joinFailedWithDuplicateNickname() {
         // given
         User user = new User(1L, "loginId", "1234", "nickname", YnColumn.N, null);
         userRepository.save(user);
@@ -95,9 +95,9 @@ class UserServiceTest {
         assertThat(accessToken.split("\\.").length).isEqualTo(3);
     }
 
-    @DisplayName("[loginWithNoId] 없는 아이디로 로그인한다.")
+    @DisplayName("[loginFailedWithNoId] 없는 아이디로 로그인하면 (InvalidUserException) 발생한다.")
     @Test
-    void loginWithNoId() {
+    void loginFailedWithNoId() {
         // given
         User user = new User(1L, "loginId", "1234", "nickname", YnColumn.N, null);
         userRepository.save(user);
@@ -112,9 +112,9 @@ class UserServiceTest {
         assertThat(invalidUserException.getMessage()).isEqualTo(ResponseCode.INVALID_LOGIN_ID.getMessage());
     }
 
-    @DisplayName("[loginWithNoPw] 없는 비밀번호로 로그인한다.")
+    @DisplayName("[loginFailedWithNoPw] 없는 비밀번호로 로그인하면 (InvalidUserException) 발생한다.")
     @Test
-    void loginWithNoPw() {
+    void loginFailedWithNoPw() {
         // given
         User user = new User(1L, "loginId", "1234", "nickname", YnColumn.N, null);
         userRepository.save(user);
@@ -143,9 +143,9 @@ class UserServiceTest {
         assertThat(user.getLoginId()).isEqualTo("loginId");
     }
 
-    @DisplayName("[getUserFail] loginId 로 User 조회를 실패한다.")
+    @DisplayName("[getUserFailedWithNoId] 없는 loginId 로 User 조회시 (NotFoundException) 발생한다.")
     @Test
-    void getUserFail() {
+    void getUserFailedWithNoId() {
         // given
         // when
         NotFoundException notFoundException = Assertions.catchThrowableOfType(
