@@ -32,13 +32,8 @@ public class SpendingService {
         User user = userService.getUser(loginId);
         Category category = categoryService.getCategory(categoryName);
 
-        Spending spending = createSpending(date, amount, memo, excludeTotal, user, category);
+        Spending spending = spendingRepository.save(Spending.createSpending(date, amount, memo, excludeTotal, user, category));
         return spending.getId();
-    }
-
-    private Spending createSpending(LocalDateTime date, long amount, String memo, boolean excludeTotal, User user, Category category) {
-        Spending createdSpending = Spending.createSpending(date, amount, memo, excludeTotal, user, category);
-        return spendingRepository.save(createdSpending);
     }
 
     @Transactional
