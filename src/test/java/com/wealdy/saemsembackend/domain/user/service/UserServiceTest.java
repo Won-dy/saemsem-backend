@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wealdy.saemsembackend.domain.core.enums.YnColumn;
 import com.wealdy.saemsembackend.domain.core.exception.AlreadyExistException;
+import com.wealdy.saemsembackend.domain.core.exception.InvalidUserException;
 import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
 import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
 import com.wealdy.saemsembackend.domain.user.entity.User;
@@ -102,13 +103,13 @@ class UserServiceTest {
         userRepository.save(user);
 
         // when
-        NotFoundException notFoundException = Assertions.catchThrowableOfType(
+        InvalidUserException invalidUserException = Assertions.catchThrowableOfType(
             () -> userService.login("loginId2", "1234"),
-            NotFoundException.class
+            InvalidUserException.class
         );
 
         // then
-        assertThat(notFoundException.getMessage()).isEqualTo(ResponseCode.NOT_FOUND_LOGIN_ID.getMessage());
+        assertThat(invalidUserException.getMessage()).isEqualTo(ResponseCode.INVALID_LOGIN_ID.getMessage());
     }
 
     @DisplayName("[loginWithNoPw] 없는 비밀번호로 로그인한다.")
@@ -119,13 +120,13 @@ class UserServiceTest {
         userRepository.save(user);
 
         // when
-        NotFoundException notFoundException = Assertions.catchThrowableOfType(
+        InvalidUserException invalidUserException = Assertions.catchThrowableOfType(
             () -> userService.login("loginId", "1111"),
-            NotFoundException.class
+            InvalidUserException.class
         );
 
         // then
-        assertThat(notFoundException.getMessage()).isEqualTo(ResponseCode.NOT_FOUND_PASSWORD.getMessage());
+        assertThat(invalidUserException.getMessage()).isEqualTo(ResponseCode.INVALID_PASSWORD.getMessage());
     }
 
     @DisplayName("[getUser] loginId 로 User 조회를 성공한다.")

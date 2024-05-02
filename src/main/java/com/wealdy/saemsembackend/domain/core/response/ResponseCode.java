@@ -17,13 +17,13 @@ public enum ResponseCode {
     // Http Status Code 401
     INVALID_TOKEN(3000, "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(3001, "만료된 토큰입니다."),
+    INVALID_LOGIN_ID(3002, "존재하지 않는 아이디입니다."),
+    INVALID_PASSWORD(3003, "비밀번호가 틀립니다."),
 
     // Http Status Code 404
     NOT_FOUND_USER(4001, "존재하지 않는 회원입니다."),
     NOT_FOUND_CATEGORY(4002, "존재하지 않는 카테고리입니다."),
     NOT_FOUND_SPENDING(4003, "존재하지 않는 지출입니다."),
-    NOT_FOUND_LOGIN_ID(4004, "존재하지 않는 아이디입니다."),
-    NOT_FOUND_PASSWORD(4005, "비밀번호가 틀립니다."),
 
     // HTTP_CODE 500
     UNKNOWN_ERROR(-1, "Unknown Error");

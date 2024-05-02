@@ -3,6 +3,7 @@ package com.wealdy.saemsembackend.domain.user.service;
 import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FOUND_USER;
 
 import com.wealdy.saemsembackend.domain.core.exception.AlreadyExistException;
+import com.wealdy.saemsembackend.domain.core.exception.InvalidUserException;
 import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
 import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
 import com.wealdy.saemsembackend.domain.core.util.JwtUtil;
@@ -47,9 +48,9 @@ public class UserService {
     @Transactional
     public GetLoginDto login(String loginId, String password) {
         User user = userRepository.findByLoginId(loginId)
-            .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND_LOGIN_ID));
+            .orElseThrow(() -> new InvalidUserException(ResponseCode.INVALID_LOGIN_ID));
         if (!password.equals(user.getPassword())) {
-            throw new NotFoundException(ResponseCode.NOT_FOUND_PASSWORD);
+            throw new InvalidUserException(ResponseCode.INVALID_PASSWORD);
         }
 
         JwtUtil jwtUtil = JwtUtil.getInstance();
