@@ -147,12 +147,9 @@ class UserServiceTest {
     @Test
     void getUserFail() {
         // given
-        User newUser = new User(1L, "loginId", "1234", "nickname", YnColumn.N, null);
-        userRepository.save(newUser);
-
         // when
         NotFoundException notFoundException = Assertions.catchThrowableOfType(
-            () -> userService.getUser("loginId2"),
+            () -> userService.getUser("loginId"),
             NotFoundException.class
         );
 
