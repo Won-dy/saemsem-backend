@@ -48,7 +48,7 @@ public class UserService {
     public GetLoginDto login(String loginId, String password) {
         User user = userRepository.findByLoginId(loginId)
             .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND_LOGIN_ID));
-        if (!(password).equals(user.getPassword())) {
+        if (!password.equals(user.getPassword())) {
             throw new NotFoundException(ResponseCode.NOT_FOUND_PASSWORD);
         }
 

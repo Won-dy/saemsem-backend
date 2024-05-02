@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class CustomUserRepository implements UserRepository {
+public class JpaUserRepository implements UserRepository {
 
     private final EntityManager em;
 
