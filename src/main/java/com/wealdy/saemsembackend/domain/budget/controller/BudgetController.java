@@ -1,6 +1,6 @@
 package com.wealdy.saemsembackend.domain.budget.controller;
 
-import static com.wealdy.saemsembackend.domain.core.Constant.USER_ID_KEY;
+import static com.wealdy.saemsembackend.domain.core.Constant.LOGIN_ID_KEY;
 
 import com.wealdy.saemsembackend.domain.budget.controller.request.CreateBudgetRequest;
 import com.wealdy.saemsembackend.domain.budget.controller.response.BudgetListResponse;
@@ -30,8 +30,8 @@ public class BudgetController {
     private final BudgetService budgetService;
 
     @PostMapping
-    public Response<Void> createBudget(@Valid @RequestBody CreateBudgetRequest request, @RequestAttribute(name = USER_ID_KEY) String userId) {
-        budgetService.createBudget(DateUtils.convertFirstDayOfMonth(request.getYear(), request.getMonth()), request.getBudgets(), userId);
+    public Response<Void> createBudget(@Valid @RequestBody CreateBudgetRequest request, @RequestAttribute(name = LOGIN_ID_KEY) String loginId) {
+        budgetService.createBudget(DateUtils.convertFirstDayOfMonth(request.getYear(), request.getMonth()), request.getBudgets(), loginId);
         return Response.OK;
     }
 
@@ -39,9 +39,9 @@ public class BudgetController {
     public Response<BudgetListResponse> getBudgetList(
         @RequestParam @Positive(message = "년도는 0 이상으로 입력해야 합니다.") int year,
         @RequestParam @Range(min = 1, max = 12, message = "월은 1~12 범위 내에서 입력해야 합니다.") int month,
-        @RequestAttribute(name = USER_ID_KEY) String userId
+        @RequestAttribute(name = LOGIN_ID_KEY) String loginId
     ) {
         LocalDate localDate = DateUtils.convertFirstDayOfMonth(year, month);
-        return Response.of(BudgetListResponse.of(localDate, budgetService.getBudgetList(localDate, userId)));
+        return Response.of(BudgetListResponse.of(localDate, budgetService.getBudgetList(localDate, loginId)));
     }
 }

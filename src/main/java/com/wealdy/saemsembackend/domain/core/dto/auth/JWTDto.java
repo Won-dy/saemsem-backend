@@ -9,12 +9,12 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class JWTDto {
 
-    private final long userId;
+    private final String loginId;
     private final Date expirationTime;
     private final Date createdTime;
     private final String token;
 
-    public static JWTDto of(long userId, Date expirationTime, Date createdTime, String token) {
-        return new JWTDto(userId, expirationTime, createdTime, token);
+    public static JWTDto of(String loginId, Date expirationTime, Date createdTime, String token) {
+        return new JWTDto(loginId, expirationTime, createdTime, token);
     }
 }

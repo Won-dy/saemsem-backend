@@ -24,8 +24,7 @@ public class UserService {
         validateDuplicateId(loginId);
         validateDuplicateNickname(nickname);
 
-        User newUser = User.createUser(loginId, password, nickname);
-        userRepository.save(newUser);
+        createUser(loginId, password, nickname);
     }
 
     private void validateDuplicateId(String loginId) {
@@ -40,20 +39,27 @@ public class UserService {
         }
     }
 
+    private void createUser(String loginId, String password, String nickname) {
+        User newUser = User.createUser(loginId, password, nickname);
+        userRepository.save(newUser);
+    }
+
     @Transactional
     public GetLoginDto login(String loginId, String password) {
-        User user = userRepository.findByLoginIdAndPassword(loginId, password)
-            .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND_USER));
+        User user = userRepository.findByLoginId(loginId)
+            .orElseThrow(() -> new NotFoundException(ResponseCode.NOT_FOUND_LOGIN_ID));
+        if (!(password).equals(user.getPassword())) {
+            throw new NotFoundException(ResponseCode.NOT_FOUND_PASSWORD);
+        }
 
-        Long userId = user.getId();
         JwtUtil jwtUtil = JwtUtil.getInstance();
-        String accessToken = jwtUtil.createAccessToken(userId);
+        String accessToken = jwtUtil.createAccessToken(loginId);
         return new GetLoginDto(accessToken);
     }
 
     @Transactional(readOnly = true)
-    public User getUserById(String userId) {
-        return userRepository.findById(userId)
+    public User getUser(String loginId) {
+        return userRepository.findByLoginId(loginId)
             .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
     }
 }

@@ -9,10 +9,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -20,7 +22,7 @@ public class UserController {
     /**
      * 회원가입 API
      */
-    @PostMapping("/user")
+    @PostMapping
     public Response<Void> join(@Valid @RequestBody JoinRequest request) {
         userService.join(request.getLoginId(), request.getPassword(), request.getNickname());
         return Response.OK;

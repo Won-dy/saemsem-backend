@@ -1,6 +1,6 @@
 package com.wealdy.saemsembackend.domain.core.util;
 
-import static com.wealdy.saemsembackend.domain.core.Constant.USER_ID_KEY;
+import static com.wealdy.saemsembackend.domain.core.Constant.LOGIN_ID_KEY;
 
 import com.wealdy.saemsembackend.domain.core.dto.auth.JWTDto;
 import com.wealdy.saemsembackend.domain.core.exception.ExpiredTokenException;
@@ -32,14 +32,14 @@ public class JwtUtil {
     private final static String secret = "djtyS5dopy5dfNt9dfgPmwch5d6klsg0sdlk1kYDgp";
     private final static int ACCESS_TOKEN_EXPIRATION = 86400;  // 1 DAY
 
-    public String createAccessToken(long userId) {
-        return createToken(userId, ACCESS_TOKEN_EXPIRATION);
+    public String createAccessToken(String loginId) {
+        return createToken(loginId, ACCESS_TOKEN_EXPIRATION);
     }
 
-    private String createToken(long userId, long expiration) {
+    private String createToken(String loginId, long expiration) {
         Date now = new Date();
         return Jwts.builder()
-            .claim(USER_ID_KEY, userId)
+            .claim(LOGIN_ID_KEY, loginId)
             .issuedAt(now)
             .expiration(new Date(now.getTime() + (1000 * expiration)))
             .signWith(Keys.hmacShaKeyFor(secret.getBytes()), Jwts.SIG.HS256)
@@ -55,7 +55,7 @@ public class JwtUtil {
                 .build().parseSignedClaims(token);
             Claims claims = claimsJws.getPayload();
 
-            return JWTDto.of(claims.get(USER_ID_KEY, Long.class), claims.getExpiration(), claims.getIssuedAt(), token);
+            return JWTDto.of(claims.get(LOGIN_ID_KEY, String.class), claims.getExpiration(), claims.getIssuedAt(), token);
         } catch (ExpiredJwtException ex) {
             throw new ExpiredTokenException();
         } catch (JwtException ex) {
