@@ -15,8 +15,9 @@ public class SpendingListResponse {
     private final List<SpendingSummaryDto> spendingTotalByCategory;
     private final ListResponseDto<SpendingResponse> spendingList;
 
-    public static SpendingListResponse of(long spendingTotal, List<SpendingSummaryDto> spendingTotalByCategory,
-        ListResponseDto<SpendingResponse> spendingList) {
+    public static SpendingListResponse of(
+        long spendingTotal, List<SpendingSummaryDto> spendingTotalByCategory, ListResponseDto<SpendingResponse> spendingList
+    ) {
         return new SpendingListResponse(spendingTotal, spendingTotalByCategory, spendingList);
     }
 }
