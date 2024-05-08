@@ -15,6 +15,11 @@ public class JpaCategoryRepository implements CategoryRepository {
 
     private final EntityManager em;
 
+    @Override
+    public void save(Category category) {
+        em.persist(category);
+    }
+
     public List<Category> findAll() {
         return em.createQuery("select c from Category c", Category.class).getResultList();
     }
