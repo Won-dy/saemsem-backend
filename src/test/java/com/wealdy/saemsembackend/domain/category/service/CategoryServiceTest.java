@@ -31,45 +31,9 @@ class CategoryServiceTest {
     @Test
     void getCategoryList() {
         // given
-        categoryRepository.save(
-            new Category() {
-                @Override
-                public Long getId() {
-                    return 1L;
-                }
-
-                @Override
-                public String getName() {
-                    return "기타";
-                }
-            }
-        );
-        categoryRepository.save(
-            new Category() {
-                @Override
-                public Long getId() {
-                    return 2L;
-                }
-
-                @Override
-                public String getName() {
-                    return "식비";
-                }
-            }
-        );
-        categoryRepository.save(
-            new Category() {
-                @Override
-                public Long getId() {
-                    return 3L;
-                }
-
-                @Override
-                public String getName() {
-                    return "교통비";
-                }
-            }
-        );
+        categoryRepository.save(Category.of(1L, "기타"));
+        categoryRepository.save(Category.of(2L, "식비"));
+        categoryRepository.save(Category.of(3L, "교통비"));
 
         // when
         List<GetCategoryDto> categoryList = categoryService.getCategoryList();
@@ -85,45 +49,9 @@ class CategoryServiceTest {
     @Test
     void getCategory() {
         // given
-        categoryRepository.save(
-            new Category() {
-                @Override
-                public Long getId() {
-                    return 1L;
-                }
-
-                @Override
-                public String getName() {
-                    return "기타";
-                }
-            }
-        );
-        categoryRepository.save(
-            new Category() {
-                @Override
-                public Long getId() {
-                    return 2L;
-                }
-
-                @Override
-                public String getName() {
-                    return "식비";
-                }
-            }
-        );
-        categoryRepository.save(
-            new Category() {
-                @Override
-                public Long getId() {
-                    return 3L;
-                }
-
-                @Override
-                public String getName() {
-                    return "교통비";
-                }
-            }
-        );
+        categoryRepository.save(Category.of(1L, "기타"));
+        categoryRepository.save(Category.of(2L, "식비"));
+        categoryRepository.save(Category.of(3L, "교통비"));
 
         // when
         Category category1 = categoryService.getCategory("기타");
