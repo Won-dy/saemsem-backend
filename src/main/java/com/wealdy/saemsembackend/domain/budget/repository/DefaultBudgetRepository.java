@@ -42,4 +42,9 @@ public class DefaultBudgetRepository implements BudgetRepository {
     public List<BudgetTotalProjection> sumByUser(LocalDate date) {
         return jpaBudgetRepository.sumByUser(date);
     }
+
+    @Override
+    public Long findAmountByUserAndCategory(LocalDate date, User user, String categoryId) {
+        return jpaBudgetRepository.findAmountByUserAndCategory(date, user, categoryId);
+    }
 }

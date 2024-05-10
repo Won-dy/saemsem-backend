@@ -1,6 +1,7 @@
 package com.wealdy.saemsembackend.domain.spending.repository;
 
 import com.wealdy.saemsembackend.domain.spending.entity.Spending;
+import com.wealdy.saemsembackend.domain.spending.repository.projection.SpendingRecommendProjection;
 import com.wealdy.saemsembackend.domain.spending.repository.projection.SpendingSummaryProjection;
 import com.wealdy.saemsembackend.domain.user.entity.User;
 import java.time.LocalDateTime;
@@ -65,6 +66,23 @@ public interface SpendingRepository extends JpaRepository<Spending, Long>, JpaSp
         @Param("category") List<String> category,
         @Param("minAmount") Long minAmount,
         @Param("maxAmount") Long maxAmount,
+        @Param("userId") Long userId
+    );
+
+    @Query(nativeQuery = true,
+        value = "select categoryName, sum(amount) as usedAmount "
+            + "from (select c.name as categoryName, sum(s.amount) as amount from spending s "
+            + "left join category c on c.category_id = s.category_id "
+            + "where s.date between :startDate and :endDate and s.user_id = :userId "
+            + "group by c.name "
+            + "union "
+            + "select c.name as categoryName, 0 as amount from spending s "
+            + "right join category c on c.category_id = s.category_id) "
+            + "as spendingByCategory group by categoryName"
+    )
+    List<SpendingRecommendProjection> getUsedAmountByCategory(
+        @Param("startDate") LocalDateTime startDate,
+        @Param("endDate") LocalDateTime endDate,
         @Param("userId") Long userId
     );
 }

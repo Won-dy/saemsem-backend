@@ -13,6 +13,7 @@ public enum ResponseCode {
     INVALID_PARAMETER(1000, "Invalid Parameter"),
     ALREADY_EXIST_ID(2000, "이미 존재하는 아이디입니다."),
     ALREADY_EXIST_NICKNAME(2001, "이미 존재하는 닉네임입니다."),
+    NOT_SET_BUDGET_FOR_SPENDING_RECOMMEND(2002, "지출 추천은 이달의 예산 설정 후에 가능합니다."),
 
     // Http Status Code 401
     INVALID_TOKEN(3000, "유효하지 않은 토큰입니다."),

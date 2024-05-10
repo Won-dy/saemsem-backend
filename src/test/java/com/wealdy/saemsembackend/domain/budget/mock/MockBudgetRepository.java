@@ -76,4 +76,9 @@ public class MockBudgetRepository implements BudgetRepository {
     public List<BudgetTotalProjection> sumByUser(LocalDate date) {
         return null;
     }
+
+    @Override
+    public Long findAmountByUserAndCategory(LocalDate date, User user, String categoryId) {
+        return null;
+    }
 }

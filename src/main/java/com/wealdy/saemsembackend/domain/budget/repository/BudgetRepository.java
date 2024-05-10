@@ -22,4 +22,6 @@ public interface BudgetRepository {
     List<BudgetRecommendProjection> findByDate(@Param("date") LocalDate date);
 
     List<BudgetTotalProjection> sumByUser(@Param("date") LocalDate date);
+
+    Long findAmountByUserAndCategory(LocalDate date, User user, String categoryId);
 }
