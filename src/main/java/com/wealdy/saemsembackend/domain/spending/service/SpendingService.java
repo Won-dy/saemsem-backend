@@ -130,9 +130,6 @@ public class SpendingService {
             spendingRepository.getUsedAmountByCategory(getStartDateTime(firstDayOfMonth), getEndDateTime(today), user.getId());
         // 카테고리별로 순회하며 지출 추천
         for (SpendingRecommendProjection projection : usedAmountByCategory) {
-            System.out.println("===========(" + projection.getCategoryName() + ")============================================================");
-            System.out.println(" @#$%^&%$##$^%#^%$@^&*%$*#= " + projection.getCategoryName() + " = " + projection.getUsedAmount());
-
             // 2. 카테고리의 이번 달 예산 조회
             Long totalBudgetOfMonth = budgetRepository.findAmountByUserAndCategory(firstDayOfMonth, user, projection.getCategoryName());
 
@@ -147,14 +144,6 @@ public class SpendingService {
 
             recommendSpendingByCategory.add(spendingRecommendByCategory);
             recommendSpendingTotal += spendingRecommendByCategory.getRecommendAmount();
-        }
-
-        List<SpendingTodayProjection> todaySpendingByCategory =
-            spendingRepository.getSumAmountByCategoryAndDate(getStartDateTime(firstDayOfMonth), getEndDateTime(today), user);
-        for (SpendingTodayProjection projection : todaySpendingByCategory) {
-
-            System.out.println("===========(" + projection.getCategory().getName() + ")============================================================");
-            System.out.println(" @#$%^&%$##$^%#^%$@^&*%$*#= " + projection.getCategory().getId() + " = " + projection.getUsedAmount());
         }
 
         return GetSpendingRecommendDto.of(recommendSpendingTotal, recommendSpendingByCategory);
