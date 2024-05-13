@@ -15,11 +15,14 @@ import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
 import com.wealdy.saemsembackend.domain.spending.entity.Spending;
 import com.wealdy.saemsembackend.domain.spending.repository.SpendingRepository;
 import com.wealdy.saemsembackend.domain.spending.repository.projection.SpendingRecommendProjection;
+import com.wealdy.saemsembackend.domain.spending.repository.projection.SpendingTodayProjection;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingListDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingRecommendByCategoryDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingRecommendDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingSummaryDto;
+import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingTodayByCategoryDto;
+import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingTodayDto;
 import com.wealdy.saemsembackend.domain.user.entity.User;
 import com.wealdy.saemsembackend.domain.user.service.UserService;
 import java.time.LocalDate;
@@ -127,6 +130,9 @@ public class SpendingService {
             spendingRepository.getUsedAmountByCategory(getStartDateTime(firstDayOfMonth), getEndDateTime(today), user.getId());
         // 카테고리별로 순회하며 지출 추천
         for (SpendingRecommendProjection projection : usedAmountByCategory) {
+            System.out.println("===========(" + projection.getCategoryName() + ")============================================================");
+            System.out.println(" @#$%^&%$##$^%#^%$@^&*%$*#= " + projection.getCategoryName() + " = " + projection.getUsedAmount());
+
             // 2. 카테고리의 이번 달 예산 조회
             Long totalBudgetOfMonth = budgetRepository.findAmountByUserAndCategory(firstDayOfMonth, user, projection.getCategoryName());
 
@@ -141,6 +147,14 @@ public class SpendingService {
 
             recommendSpendingByCategory.add(spendingRecommendByCategory);
             recommendSpendingTotal += spendingRecommendByCategory.getRecommendAmount();
+        }
+
+        List<SpendingTodayProjection> todaySpendingByCategory =
+            spendingRepository.getSumAmountByCategoryAndDate(getStartDateTime(firstDayOfMonth), getEndDateTime(today), user);
+        for (SpendingTodayProjection projection : todaySpendingByCategory) {
+
+            System.out.println("===========(" + projection.getCategory().getName() + ")============================================================");
+            System.out.println(" @#$%^&%$##$^%#^%$@^&*%$*#= " + projection.getCategory().getId() + " = " + projection.getUsedAmount());
         }
 
         return GetSpendingRecommendDto.of(recommendSpendingTotal, recommendSpendingByCategory);
@@ -209,6 +223,51 @@ public class SpendingService {
         }
 
         return recommendAmount;
+    }
+
+    /*
+        오늘 지출 안내
+
+        1. 카테고리별 오늘 지출 금액을 조회합니다.
+        2. 카테고리별 이번 달 예산을 조회합니다.
+        3. 오늘 적정 금액을 구합니다. [이번 달 예산 / 이번 달의 총 일 수]
+        4. 위험도를 구합니다. [오늘 지출 금액 / 오늘 적정 금액 * 100]
+     */
+    public GetSpendingTodayDto spendingToday(String loginId) {
+        User user = userService.getUser(loginId);
+
+        long todaySpendingTotal = 0;  // 오늘 지출 총액
+        List<GetSpendingTodayByCategoryDto> todaySpendingTotalByCategory = new ArrayList<>();  // 카테고리별 오늘 지출 총 액
+
+        // 날짜 정보 얻기
+        LocalDate today = LocalDate.now();  // 오늘 날짜
+        LocalDate firstDayOfMonth = today.withDayOfMonth(1);  // 이번 달의 1일 날짜
+        int lengthOfMonth = today.lengthOfMonth();  // 이번 달의 총 일 수
+
+        // 1. 카테고리별 오늘 지출 금액을 조회
+        List<SpendingTodayProjection> todaySpendingByCategory =
+            spendingRepository.getSumAmountByCategoryAndDate(getStartDateTime(today), getEndDateTime(today), user);
+        for (SpendingTodayProjection projection : todaySpendingByCategory) {
+
+            // 2. 카테고리의 이번 달 예산 조회
+            Long budgetOfMonth = budgetRepository.findAmountByUserAndCategory(firstDayOfMonth, user, projection.getCategory().getName());
+
+            // 3. 오늘 적정 금액을 구합니다.
+            long moderateAmount = budgetOfMonth / lengthOfMonth;
+
+            // 오늘 지출 금액
+            long todayUsedAmount = projection.getUsedAmount();
+
+            // 4. 위험도를 구합니다.
+            long riskRate = Math.round(todayUsedAmount * 100.0 / moderateAmount);
+
+            todaySpendingTotal += todayUsedAmount;
+            todaySpendingTotalByCategory.add(
+                GetSpendingTodayByCategoryDto.of(projection.getCategory().getName(), moderateAmount, todayUsedAmount, riskRate + "%")
+            );
+        }
+
+        return GetSpendingTodayDto.of(todaySpendingTotal, todaySpendingTotalByCategory);
     }
 
     @Transactional(readOnly = true)

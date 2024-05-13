@@ -3,6 +3,7 @@ package com.wealdy.saemsembackend.domain.spending.repository;
 import com.wealdy.saemsembackend.domain.spending.entity.Spending;
 import com.wealdy.saemsembackend.domain.spending.repository.projection.SpendingRecommendProjection;
 import com.wealdy.saemsembackend.domain.spending.repository.projection.SpendingSummaryProjection;
+import com.wealdy.saemsembackend.domain.spending.repository.projection.SpendingTodayProjection;
 import com.wealdy.saemsembackend.domain.user.entity.User;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -84,5 +85,17 @@ public interface SpendingRepository extends JpaRepository<Spending, Long>, JpaSp
         @Param("startDate") LocalDateTime startDate,
         @Param("endDate") LocalDateTime endDate,
         @Param("userId") Long userId
+    );
+
+    /*
+        카테고리별 금액 총합 조회 (날짜, user 로 조회)
+     */
+    @Query(value = "select c as category, coalesce(sum(s.amount), 0) as usedAmount from Category c "
+        + "left join Spending s on c = s.category and s.user = :user and s.date between :startDate and :endDate "
+        + "group by c")
+    List<SpendingTodayProjection> getSumAmountByCategoryAndDate(
+        @Param("startDate") LocalDateTime startDate,
+        @Param("endDate") LocalDateTime endDate,
+        @Param("user") User user
     );
 }

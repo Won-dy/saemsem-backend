@@ -14,6 +14,7 @@ import com.wealdy.saemsembackend.domain.spending.controller.response.SpendingRes
 import com.wealdy.saemsembackend.domain.spending.service.SpendingService;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingListDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingRecommendDto;
+import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingTodayDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -125,6 +126,14 @@ public class SpendingController {
     @GetMapping("/recommend")
     public Response<GetSpendingRecommendDto> recommendSpending(@RequestAttribute(name = LOGIN_ID_KEY) String loginId) {
         return Response.of(spendingService.recommendSpending(loginId));
+    }
+
+    /*
+        오늘 지출 안내
+     */
+    @GetMapping("/today")
+    public Response<GetSpendingTodayDto> spendingToday(@RequestAttribute(name = LOGIN_ID_KEY) String loginId) {
+        return Response.of(spendingService.spendingToday(loginId));
     }
 
     @PutMapping("/exclude/{spendingId}")
