@@ -20,6 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    // 회원 가입
     @Transactional
     public void join(String loginId, String password, String nickname) {
         validateDuplicateId(loginId);
@@ -28,23 +29,27 @@ public class UserService {
         createUser(loginId, password, nickname);
     }
 
+    // 로그인 ID 중복 확인
     private void validateDuplicateId(String loginId) {
         if (userRepository.findByLoginId(loginId).isPresent()) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST_ID);
         }
     }
 
+    // 닉네임 중복 확인
     private void validateDuplicateNickname(String nickname) {
         if (userRepository.findByNickname(nickname).isPresent()) {
             throw new AlreadyExistException(ResponseCode.ALREADY_EXIST_NICKNAME);
         }
     }
 
+    // user 생성
     private void createUser(String loginId, String password, String nickname) {
         User newUser = User.createUser(loginId, password, nickname);
         userRepository.save(newUser);
     }
 
+    // 로그인
     @Transactional
     public GetLoginDto login(String loginId, String password) {
         User user = userRepository.findByLoginId(loginId)
@@ -58,6 +63,7 @@ public class UserService {
         return new GetLoginDto(accessToken);
     }
 
+    // 로그인 ID 로 user 조회
     @Transactional(readOnly = true)
     public User getUser(String loginId) {
         return userRepository.findByLoginId(loginId)

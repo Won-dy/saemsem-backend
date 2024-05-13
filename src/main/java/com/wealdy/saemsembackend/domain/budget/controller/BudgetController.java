@@ -31,12 +31,18 @@ public class BudgetController {
 
     private final BudgetService budgetService;
 
+    /**
+     * 예산 설정 API
+     */
     @PostMapping
     public Response<Void> createBudget(@Valid @RequestBody CreateBudgetRequest request, @RequestAttribute(name = LOGIN_ID_KEY) String loginId) {
         budgetService.createBudget(DateUtils.convertFirstDayOfMonth(request.getYear(), request.getMonth()), request.getBudgets(), loginId);
         return Response.OK;
     }
 
+    /**
+     * 예산 목록 조회 API
+     */
     @GetMapping
     public Response<BudgetListResponse> getBudgetList(
         @RequestParam @Positive(message = "년도는 0 이상으로 입력해야 합니다.") int year,
@@ -47,6 +53,9 @@ public class BudgetController {
         return Response.of(BudgetListResponse.of(localDate, budgetService.getBudgetList(localDate, loginId)));
     }
 
+    /**
+     * 예산 설계 (추천) API
+     */
     @GetMapping("/recommend")
     public Response<BudgetRecommendResponse> recommendBudget(
         @RequestParam @PositiveOrZero(message = "금액은 0원 이상으로 입력해야 합니다.") long budgetTotal,

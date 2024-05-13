@@ -49,6 +49,7 @@ public class SpendingService {
     private final static long MIN_RECOMMEND_AMOUNT = 1000; // 최소 추천 금액
     private final static double SAVING_WELL_RATIO = 70.0; // 최소 추천 금액
 
+    // 지출 생성
     @Transactional
     public Long createSpending(LocalDateTime date, long amount, String memo, boolean excludeTotal, String categoryName, String loginId) {
         User user = userService.getUser(loginId);
@@ -58,6 +59,7 @@ public class SpendingService {
         return spending.getId();
     }
 
+    // 지출 수정
     @Transactional
     public void updateSpending(
         Long spendingId, LocalDateTime date, long amount, String memo, String categoryName, String loginId
@@ -69,6 +71,7 @@ public class SpendingService {
         spending.updateSpending(date, amount, memo, category);
     }
 
+    // 지출 합계 제외 수정
     @Transactional
     public void updateExclude(Long spendingId, boolean excludeTotal, String loginId) {
         User user = userService.getUser(loginId);
@@ -77,6 +80,7 @@ public class SpendingService {
         spending.updateExclude(excludeTotal);
     }
 
+    // 지출 상세 조회
     public GetSpendingDto getSpending(Long spendingId, String loginId) {
         User user = userService.getUser(loginId);
         Spending spending = getSpending(spendingId, user);
@@ -138,7 +142,7 @@ public class SpendingService {
                 throw new NotSetException(ResponseCode.NOT_SET_BUDGET_FOR_SPENDING_RECOMMEND);
             }
 
-            // 카테고리별 예산 추천
+            // 카테고리별 지출 추천
             GetSpendingRecommendByCategoryDto spendingRecommendByCategory = recommendSpendingByCategory(
                 projection.getCategoryName(), projection.getUsedAmount(), totalBudgetOfMonth, lengthOfMonth, pastDayOfMonth, remainDayOfMonth);
 
@@ -149,6 +153,7 @@ public class SpendingService {
         return GetSpendingRecommendDto.of(recommendSpendingTotal, recommendSpendingByCategory);
     }
 
+    // 카테고리별 지출 추천
     private GetSpendingRecommendByCategoryDto recommendSpendingByCategory(
         String categoryName,
         long usedAmount,
@@ -203,6 +208,7 @@ public class SpendingService {
         return GetSpendingRecommendByCategoryDto.of(categoryName, adjustRecommendAmount(recommendAmount), message);  // 8
     }
 
+    // 추천 금액 변환
     private long adjustRecommendAmount(long recommendAmount) {
         // 8. 추천 금액을 사용자 친화적으로 변환
         if (recommendAmount <= MIN_RECOMMEND_AMOUNT) {  // 8-1. 최소 추천 금액보다 적으면 [최소 추천 금액] 추천
@@ -259,6 +265,10 @@ public class SpendingService {
         return GetSpendingTodayDto.of(todaySpendingTotal, todaySpendingTotalByCategory);
     }
 
+    /*
+        지출 목록 조회 (with Java)
+        java 로 처리 로직 구현
+     */
     @Transactional(readOnly = true)
     public GetSpendingListDto getSpendingList(
         LocalDate startDate,
@@ -305,7 +315,10 @@ public class SpendingService {
         return GetSpendingListDto.of(spendingTotal, spendingTotalByCategory, ListResponseDto.from(spendingList));
     }
 
-    // 쿼리로 모든 응답 값들을 조회
+    /*
+        지출 목록 조회 (with Query)
+        쿼리로 모든 응답 값들을 조회
+     */
     @Transactional(readOnly = true)
     public List<GetSpendingDto> getSpendingListWithQuery(
         LocalDate startDate,
@@ -325,6 +338,7 @@ public class SpendingService {
             .toList();
     }
 
+    // 카테고리 별 지출 합계
     @Transactional(readOnly = true)
     public List<GetSpendingSummaryDto> getSumOfAmountByCategory(
         LocalDate startDate,
@@ -347,6 +361,7 @@ public class SpendingService {
             .toList();
     }
 
+    // 모든 지출 합계
     @Transactional(readOnly = true)
     public long getSumOfAmountByDate(
         LocalDate startDate,
@@ -364,6 +379,7 @@ public class SpendingService {
         return spendingRepository.getSumOfAmountByDate(startDateTime, endDateTime, category, minAmount, maxAmount, user);
     }
 
+    // 지출 삭제
     @Transactional
     public void deleteSpending(Long spendingId, String loginId) {
         User user = userService.getUser(loginId);
@@ -371,15 +387,18 @@ public class SpendingService {
         spendingRepository.delete(spending);
     }
 
+    // 지출 id 로 조회
     private Spending getSpending(Long spendingId, User user) {
         return spendingRepository.findByIdAndUser(spendingId, user)
             .orElseThrow(() -> new NotFoundException(NOT_FOUND_SPENDING));
     }
 
+    // 해당 날짜의 시작 시점 (00:00)
     private LocalDateTime getStartDateTime(LocalDate startDate) {
         return LocalDate.parse(startDate.toString()).atStartOfDay();
     }
 
+    // 해당 날짜의 끝 시점 (23:59:59)
     private LocalDateTime getEndDateTime(LocalDate endDate) {
         return endDate.atTime(LocalTime.MAX).withNano(0);
     }

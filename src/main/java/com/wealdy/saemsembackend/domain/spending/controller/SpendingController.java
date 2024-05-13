@@ -42,6 +42,9 @@ public class SpendingController {
 
     private final SpendingService spendingService;
 
+    /**
+     * 지출 생성 API
+     */
     @PostMapping
     public Response<IdResponseDto> createSpending(
         @Valid @RequestBody CreateSpendingRequest request,
@@ -59,11 +62,18 @@ public class SpendingController {
         return Response.of(IdResponseDto.from(spendingId));
     }
 
+    /**
+     * 지출 상세 조회 API
+     */
     @GetMapping("/{spendingId}")
     public Response<SpendingResponse> getSpending(@PathVariable Long spendingId, @RequestAttribute(name = LOGIN_ID_KEY) String loginId) {
         return Response.of(SpendingResponse.from(spendingService.getSpending(spendingId, loginId)));
     }
 
+    /**
+     * 지출 목록 조회 API (with Java)
+     * java 로 처리 로직 구현
+     */
     @GetMapping
     public Response<GetSpendingListDto> getSpendingList(
         @RequestParam @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "날짜 형식은 'yyyy-MM-dd' 으로 입력해야 합니다.") String startDate,
@@ -79,7 +89,10 @@ public class SpendingController {
         return Response.of(spendingService.getSpendingList(startLocalDate, endLocalDate, category, minAmount, maxAmount, loginId));
     }
 
-    // 쿼리로 모든 응답 값들을 조회
+    /**
+     * 지출 목록 조회 API (with Query)
+     * 쿼리로 모든 응답 값들을 조회
+     */
     @GetMapping("/query")
     public Response<SpendingListResponse> getSpendingListWithQuery(
         @RequestParam @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "날짜 형식은 'yyyy-MM-dd' 으로 입력해야 합니다.") String startDate,
@@ -105,6 +118,9 @@ public class SpendingController {
         return Response.of(SpendingListResponse.of(sumOfAmount, sumOfAmountByCategory, spendingList));
     }
 
+    /**
+     * 지출 수정 API
+     */
     @PutMapping("/{spendingId}")
     public Response<IdResponseDto> update(
         @PathVariable Long spendingId,
@@ -123,19 +139,25 @@ public class SpendingController {
         return Response.of(IdResponseDto.from(spendingId));
     }
 
+    /**
+     * 오늘 지출 추천 API
+     */
     @GetMapping("/recommend")
     public Response<GetSpendingRecommendDto> recommendSpending(@RequestAttribute(name = LOGIN_ID_KEY) String loginId) {
         return Response.of(spendingService.recommendSpending(loginId));
     }
 
-    /*
-        오늘 지출 안내
+    /**
+     * 오늘 지출 안내 API
      */
     @GetMapping("/today")
     public Response<GetSpendingTodayDto> spendingToday(@RequestAttribute(name = LOGIN_ID_KEY) String loginId) {
         return Response.of(spendingService.spendingToday(loginId));
     }
 
+    /**
+     * 지출의 합계 제외 수정 API
+     */
     @PutMapping("/exclude/{spendingId}")
     public Response<IdResponseDto> updateExclude(
         @PathVariable Long spendingId,
@@ -147,6 +169,9 @@ public class SpendingController {
         return Response.of(IdResponseDto.from(spendingId));
     }
 
+    /**
+     * 지출 삭제 API
+     */
     @DeleteMapping("/{spendingId}")
     public Response<Void> deleteSpending(@PathVariable Long spendingId, @RequestAttribute(name = LOGIN_ID_KEY) String loginId) {
         spendingService.deleteSpending(spendingId, loginId);

@@ -27,6 +27,7 @@ public class BudgetService {
     private final CategoryService categoryService;
     private final UserService userService;
 
+    // 예산 설정
     @Transactional
     public void createBudget(LocalDate date, List<BudgetSummaryDto> getBudgetDtoList, String loginId) {
         getBudgetDtoList
@@ -46,6 +47,7 @@ public class BudgetService {
         budgetRepository.save(budget);
     }
 
+    // 예산 목록 조회
     @Transactional(readOnly = true)
     public List<GetBudgetDto> getBudgetList(LocalDate date, String loginId) {
         User user = userService.getUser(loginId);
