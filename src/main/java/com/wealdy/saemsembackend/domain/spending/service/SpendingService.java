@@ -395,7 +395,7 @@ public class SpendingService {
 
     // 해당 날짜의 시작 시점 (00:00)
     private LocalDateTime getStartDateTime(LocalDate startDate) {
-        return LocalDate.parse(startDate.toString()).atStartOfDay();
+        return startDate.atStartOfDay();
     }
 
     // 해당 날짜의 끝 시점 (23:59:59)
