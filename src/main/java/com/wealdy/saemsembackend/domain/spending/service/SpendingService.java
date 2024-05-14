@@ -243,7 +243,7 @@ public class SpendingService {
 
         // 1. 카테고리별 오늘 지출 금액을 조회
         List<SpendingTodayProjection> todaySpendingByCategory =
-            spendingRepository.getSumAmountByCategoryAndDate(getStartDateTime(today), getEndDateTime(today), user);
+            spendingRepository.getSumOfAmountGroupByCategory(getStartDateTime(today), getEndDateTime(today), user);
         for (SpendingTodayProjection projection : todaySpendingByCategory) {
 
             // 2. 카테고리의 이번 달 예산 조회
@@ -359,7 +359,7 @@ public class SpendingService {
 
         int categorySize = (category != null) ? category.size() : 0;
 
-        return spendingRepository.getSumOfAmountByCategory(startDateTime, endDateTime, categorySize, category, minAmount, maxAmount, user.getId())
+        return spendingRepository.getSumOfAmountGroupByCategory(startDateTime, endDateTime, categorySize, category, minAmount, maxAmount, user.getId())
             .stream()
             .map(projection -> GetSpendingSummaryDto.of(projection.getCategoryName(), projection.getAmount()))
             .toList();

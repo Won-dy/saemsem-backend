@@ -81,7 +81,7 @@ public class BudgetService {
 
         List<GetBudgetDto> budgetDtoList = new ArrayList<>();
         Map<Long, Long> sumOfBudgetByUserMap = new HashMap<>();  // 유저별 예산 총합
-        budgetRepository.sumByUser(date).forEach(projection -> sumOfBudgetByUserMap.put(projection.getUserId(), projection.getSumOfBudget()));
+        budgetRepository.getSumOfBudgetGroupByUser(date).forEach(projection -> sumOfBudgetByUserMap.put(projection.getUserId(), projection.getSumOfBudget()));
         int userCnt = sumOfBudgetByUserMap.size();  // user 수
 
         long recommendAmountTotal = 0;  // 추천 예산의 총 합

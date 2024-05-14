@@ -73,7 +73,7 @@ public class MockBudgetRepository implements BudgetRepository {
     }
 
     @Override
-    public List<BudgetTotalProjection> sumByUser(LocalDate date) {
+    public List<BudgetTotalProjection> getSumOfBudgetGroupByUser(LocalDate date) {
         return null;
     }
 

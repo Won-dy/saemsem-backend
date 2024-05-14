@@ -20,7 +20,7 @@ public interface BudgetRepository {
 
     List<BudgetRecommendProjection> findByDate(LocalDate date);
 
-    List<BudgetTotalProjection> sumByUser(LocalDate date);
+    List<BudgetTotalProjection> getSumOfBudgetGroupByUser(LocalDate date);
 
     Long findAmountByUserAndCategory(LocalDate date, User user, String categoryId);
 }

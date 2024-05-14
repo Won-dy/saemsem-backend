@@ -27,7 +27,7 @@ public interface JpaBudgetRepository extends JpaRepository<Budget, Long> {
 
     @Query(value = "select b.user.id as userId, sum(b.amount) as sumOfBudget from Budget b "
         + "where b.date = :date group by b.user")
-    List<BudgetTotalProjection> sumByUser(@Param("date") LocalDate date);
+    List<BudgetTotalProjection> getSumOfBudgetByDateGroupByUser(@Param("date") LocalDate date);
 
     @Query(value = "select b.amount from Budget b where b.date = :date and b.user = :user and b.category.name = :category")
     Long findAmountByUserAndCategory(@Param("date") LocalDate date, @Param("user") User user, @Param("category") String category);

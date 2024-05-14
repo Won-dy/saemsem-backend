@@ -60,7 +60,7 @@ public interface SpendingRepository extends JpaRepository<Spending, Long>, JpaSp
             + "right join category c on c.category_id = s.category_id) "
             + "as spendingByCategory group by categoryName order by amount desc"
     )
-    List<SpendingSummaryProjection> getSumOfAmountByCategory(
+    List<SpendingSummaryProjection> getSumOfAmountGroupByCategory(
         @Param("startDate") LocalDateTime startDate,
         @Param("endDate") LocalDateTime endDate,
         @Param("categorySize") int categorySize,
@@ -93,7 +93,7 @@ public interface SpendingRepository extends JpaRepository<Spending, Long>, JpaSp
     @Query(value = "select c as category, coalesce(sum(s.amount), 0) as usedAmount from Category c "
         + "left join Spending s on c = s.category and s.user = :user and s.date between :startDate and :endDate "
         + "group by c")
-    List<SpendingTodayProjection> getSumAmountByCategoryAndDate(
+    List<SpendingTodayProjection> getSumOfAmountGroupByCategory(
         @Param("startDate") LocalDateTime startDate,
         @Param("endDate") LocalDateTime endDate,
         @Param("user") User user
