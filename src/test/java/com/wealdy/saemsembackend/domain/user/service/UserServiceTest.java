@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.wealdy.saemsembackend.domain.core.enums.YnColumn;
 import com.wealdy.saemsembackend.domain.core.exception.AlreadyExistException;
+import com.wealdy.saemsembackend.domain.core.exception.InvalidUserException;
 import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
 import com.wealdy.saemsembackend.domain.core.response.ResponseCode;
 import com.wealdy.saemsembackend.domain.user.entity.User;
@@ -44,9 +45,9 @@ class UserServiceTest {
         assertThat(joinUser.get().getNickname()).isEqualTo("nickname");
     }
 
-    @DisplayName("[validateDuplicateId] 이미 존재하는 아이디로 회원가입한다.")
+    @DisplayName("[joinFailedWithDuplicateId] 이미 존재하는 아이디로 회원가입하면 (AlreadyExistException) 발생한다.")
     @Test
-    void validateDuplicateId() {
+    void joinFailedWithDuplicateId() {
         // given
         User user = new User(1L, "loginId", "1234", "nickname", YnColumn.N, null);
         userRepository.save(user);
@@ -61,9 +62,9 @@ class UserServiceTest {
         assertThat(alreadyExistException.getMessage()).isEqualTo(ResponseCode.ALREADY_EXIST_ID.getMessage());
     }
 
-    @DisplayName("[validateDuplicateNickname] 이미 존재하는 닉네임으로 회원가입한다.")
+    @DisplayName("[joinFailedWithDuplicateNickname] 이미 존재하는 닉네임으로 회원가입하면 (AlreadyExistException) 발생한다.")
     @Test
-    void validateDuplicateNickname() {
+    void joinFailedWithDuplicateNickname() {
         // given
         User user = new User(1L, "loginId", "1234", "nickname", YnColumn.N, null);
         userRepository.save(user);
@@ -94,38 +95,38 @@ class UserServiceTest {
         assertThat(accessToken.split("\\.").length).isEqualTo(3);
     }
 
-    @DisplayName("[loginWithNoId] 없는 아이디로 로그인한다.")
+    @DisplayName("[loginFailedWithNoId] 없는 아이디로 로그인하면 (InvalidUserException) 발생한다.")
     @Test
-    void loginWithNoId() {
+    void loginFailedWithNoId() {
         // given
         User user = new User(1L, "loginId", "1234", "nickname", YnColumn.N, null);
         userRepository.save(user);
 
         // when
-        NotFoundException notFoundException = Assertions.catchThrowableOfType(
+        InvalidUserException invalidUserException = Assertions.catchThrowableOfType(
             () -> userService.login("loginId2", "1234"),
-            NotFoundException.class
+            InvalidUserException.class
         );
 
         // then
-        assertThat(notFoundException.getMessage()).isEqualTo(ResponseCode.NOT_FOUND_LOGIN_ID.getMessage());
+        assertThat(invalidUserException.getMessage()).isEqualTo(ResponseCode.INVALID_LOGIN_ID.getMessage());
     }
 
-    @DisplayName("[loginWithNoPw] 없는 비밀번호로 로그인한다.")
+    @DisplayName("[loginFailedWithNoPw] 없는 비밀번호로 로그인하면 (InvalidUserException) 발생한다.")
     @Test
-    void loginWithNoPw() {
+    void loginFailedWithNoPw() {
         // given
         User user = new User(1L, "loginId", "1234", "nickname", YnColumn.N, null);
         userRepository.save(user);
 
         // when
-        NotFoundException notFoundException = Assertions.catchThrowableOfType(
+        InvalidUserException invalidUserException = Assertions.catchThrowableOfType(
             () -> userService.login("loginId", "1111"),
-            NotFoundException.class
+            InvalidUserException.class
         );
 
         // then
-        assertThat(notFoundException.getMessage()).isEqualTo(ResponseCode.NOT_FOUND_PASSWORD.getMessage());
+        assertThat(invalidUserException.getMessage()).isEqualTo(ResponseCode.INVALID_PASSWORD.getMessage());
     }
 
     @DisplayName("[getUser] loginId 로 User 조회를 성공한다.")
@@ -142,16 +143,13 @@ class UserServiceTest {
         assertThat(user.getLoginId()).isEqualTo("loginId");
     }
 
-    @DisplayName("[getUserFail] loginId 로 User 조회를 실패한다.")
+    @DisplayName("[getUserFailedWithNoId] 없는 loginId 로 User 조회시 (NotFoundException) 발생한다.")
     @Test
-    void getUserFail() {
+    void getUserFailedWithNoId() {
         // given
-        User newUser = new User(1L, "loginId", "1234", "nickname", YnColumn.N, null);
-        userRepository.save(newUser);
-
         // when
         NotFoundException notFoundException = Assertions.catchThrowableOfType(
-            () -> userService.getUser("loginId2"),
+            () -> userService.getUser("loginId"),
             NotFoundException.class
         );
 

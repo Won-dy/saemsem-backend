@@ -12,9 +12,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -53,6 +55,16 @@ public class Budget {
     // 생성 메서드
     public static Budget createBudget(LocalDate date, long amount, User user, Category category) {
         return new Budget(
+            date,
+            amount,
+            user,
+            category
+        );
+    }
+
+    public static Budget of(Long id, LocalDate date, long amount, User user, Category category) {
+        return new Budget(
+            id,
             date,
             amount,
             user,
