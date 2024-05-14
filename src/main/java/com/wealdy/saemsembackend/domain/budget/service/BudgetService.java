@@ -1,5 +1,6 @@
 package com.wealdy.saemsembackend.domain.budget.service;
 
+import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FOUND_CATEGORY;
 import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FOUND_USER;
 
 import com.wealdy.saemsembackend.domain.budget.entity.Budget;
@@ -8,11 +9,10 @@ import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetRecom
 import com.wealdy.saemsembackend.domain.budget.service.dto.BudgetSummaryDto;
 import com.wealdy.saemsembackend.domain.budget.service.dto.GetBudgetDto;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
-import com.wealdy.saemsembackend.domain.category.service.CategoryService;
+import com.wealdy.saemsembackend.domain.category.repository.CategoryRepository;
 import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
 import com.wealdy.saemsembackend.domain.user.entity.User;
 import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
-import com.wealdy.saemsembackend.domain.user.service.UserService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,8 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BudgetService {
 
     private final BudgetRepository budgetRepository;
-    private final CategoryService categoryService;
-    private final UserService userService;
+    private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private static final int MAX_RATIO = 10;  // 기타에 포함될 최대 비율
 
@@ -38,8 +37,9 @@ public class BudgetService {
     public void createBudget(LocalDate date, List<BudgetSummaryDto> getBudgetDtoList, String loginId) {
         getBudgetDtoList
             .forEach(getBudgetDto -> {
-                User user = userService.getUser(loginId);
-                Category category = categoryService.getCategory(getBudgetDto.getCategoryName());
+                User user = findUser(loginId);
+                Category category = categoryRepository.findByName(getBudgetDto.getCategoryName())
+                    .orElseThrow(() -> new NotFoundException(NOT_FOUND_CATEGORY));
                 Optional<Budget> findBudget = budgetRepository.findByDateAndCategoryAndUser(date, category, user);
                 findBudget.ifPresentOrElse(
                     budget -> budget.updateBudget(getBudgetDto.getAmount()),
@@ -56,7 +56,7 @@ public class BudgetService {
     // 예산 목록 조회
     @Transactional(readOnly = true)
     public List<GetBudgetDto> getBudgetList(LocalDate date, String loginId) {
-        User user = userService.getUser(loginId);
+        User user = findUser(loginId);
         return budgetRepository.findByDateAndUser(date, user).stream()
             .map(projection -> GetBudgetDto.of(projection.getCategoryName(), projection.getAmount()))
             .toList();
@@ -138,6 +138,11 @@ public class BudgetService {
         budgetDtoList.add(GetBudgetDto.of("기타", etcRecommendAmount));
 
         return budgetDtoList;
+    }
+
+    private User findUser(String loginId) {
+        return userRepository.findByLoginId(loginId)
+            .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
     }
 
     private void checkUser(String loginId) {

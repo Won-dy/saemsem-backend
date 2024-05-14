@@ -1,10 +1,12 @@
 package com.wealdy.saemsembackend.domain.spending.service;
 
+import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FOUND_CATEGORY;
 import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FOUND_SPENDING;
+import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FOUND_USER;
 
 import com.wealdy.saemsembackend.domain.budget.repository.BudgetRepository;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
-import com.wealdy.saemsembackend.domain.category.service.CategoryService;
+import com.wealdy.saemsembackend.domain.category.repository.CategoryRepository;
 import com.wealdy.saemsembackend.domain.category.service.dto.GetCategoryDto;
 import com.wealdy.saemsembackend.domain.core.enums.SpendingMessage;
 import com.wealdy.saemsembackend.domain.core.enums.YnColumn;
@@ -24,7 +26,7 @@ import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingSummaryD
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingTodayByCategoryDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingTodayDto;
 import com.wealdy.saemsembackend.domain.user.entity.User;
-import com.wealdy.saemsembackend.domain.user.service.UserService;
+import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -43,8 +45,8 @@ public class SpendingService {
 
     private final SpendingRepository spendingRepository;
     private final BudgetRepository budgetRepository;
-    private final CategoryService categoryService;
-    private final UserService userService;
+    private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
     private static final long MIN_RECOMMEND_AMOUNT = 1000; // 최소 추천 금액
     private static final double SAVING_WELL_RATIO = 70.0; // 최소 추천 금액
@@ -52,8 +54,8 @@ public class SpendingService {
     // 지출 생성
     @Transactional
     public Long createSpending(LocalDateTime date, long amount, String memo, boolean excludeTotal, String categoryName, String loginId) {
-        User user = userService.getUser(loginId);
-        Category category = categoryService.getCategory(categoryName);
+        User user = findUser(loginId);
+        Category category = findCategory(categoryName);
 
         Spending spending = spendingRepository.save(Spending.createSpending(date, amount, memo, excludeTotal, user, category));
         return spending.getId();
@@ -64,8 +66,8 @@ public class SpendingService {
     public void updateSpending(
         Long spendingId, LocalDateTime date, long amount, String memo, String categoryName, String loginId
     ) {
-        User user = userService.getUser(loginId);
-        Category category = categoryService.getCategory(categoryName);
+        User user = findUser(loginId);
+        Category category = findCategory(categoryName);
 
         Spending spending = getSpending(spendingId, user);
         spending.updateSpending(date, amount, memo, category);
@@ -74,7 +76,7 @@ public class SpendingService {
     // 지출 합계 제외 수정
     @Transactional
     public void updateExclude(Long spendingId, boolean excludeTotal, String loginId) {
-        User user = userService.getUser(loginId);
+        User user = findUser(loginId);
 
         Spending spending = getSpending(spendingId, user);
         spending.updateExclude(excludeTotal);
@@ -82,7 +84,7 @@ public class SpendingService {
 
     // 지출 상세 조회
     public GetSpendingDto getSpending(Long spendingId, String loginId) {
-        User user = userService.getUser(loginId);
+        User user = findUser(loginId);
         Spending spending = getSpending(spendingId, user);
         return GetSpendingDto.from(spending);
     }
@@ -117,7 +119,7 @@ public class SpendingService {
             8-2. 100원 단위로 반올림합니다.
     */
     public GetSpendingRecommendDto recommendSpending(String loginId) {
-        User user = userService.getUser(loginId);
+        User user = findUser(loginId);
 
         // 날짜 정보 얻기
         LocalDate today = LocalDate.now();  // 오늘 날짜
@@ -229,7 +231,7 @@ public class SpendingService {
         4. 위험도를 구합니다. [오늘 지출 금액 / 오늘 적정 금액 * 100]
      */
     public GetSpendingTodayDto spendingToday(String loginId) {
-        User user = userService.getUser(loginId);
+        User user = findUser(loginId);
 
         long todaySpendingTotal = 0;  // 오늘 지출 총액
         List<GetSpendingTodayByCategoryDto> todaySpendingTotalByCategory = new ArrayList<>();  // 카테고리별 오늘 지출 총 액
@@ -278,7 +280,7 @@ public class SpendingService {
         Long maxAmount,
         String loginId
     ) {
-        User user = userService.getUser(loginId);
+        User user = findUser(loginId);
 
         LocalDateTime startDateTime = getStartDateTime(startDate);
         LocalDateTime endDateTime = getEndDateTime(endDate);
@@ -291,7 +293,9 @@ public class SpendingService {
         // 카테고리 목록을 조회하여 카테고리명=금액 map 을 만든다.
         // -> 0원 쓴 카테고리도 조회 결과로 보여주기 위해서.
         Map<String, Long> map = new HashMap<>();
-        List<GetCategoryDto> categoryList = categoryService.getCategoryList();
+        List<GetCategoryDto> categoryList = categoryRepository.findAll().stream()
+            .map(GetCategoryDto::from)
+            .toList();
         for (GetCategoryDto categoryDto : categoryList) {
             map.put(categoryDto.getName(), 0L);
         }
@@ -328,7 +332,7 @@ public class SpendingService {
         Long maxAmount,
         String loginId
     ) {
-        User user = userService.getUser(loginId);
+        User user = findUser(loginId);
 
         LocalDateTime startDateTime = getStartDateTime(startDate);
         LocalDateTime endDateTime = getEndDateTime(endDate);
@@ -348,7 +352,7 @@ public class SpendingService {
         Long maxAmount,
         String loginId
     ) {
-        User user = userService.getUser(loginId);
+        User user = findUser(loginId);
 
         LocalDateTime startDateTime = getStartDateTime(startDate);
         LocalDateTime endDateTime = getEndDateTime(endDate);
@@ -371,7 +375,7 @@ public class SpendingService {
         Long maxAmount,
         String loginId
     ) {
-        User user = userService.getUser(loginId);
+        User user = findUser(loginId);
 
         LocalDateTime startDateTime = getStartDateTime(startDate);
         LocalDateTime endDateTime = getEndDateTime(endDate);
@@ -382,7 +386,7 @@ public class SpendingService {
     // 지출 삭제
     @Transactional
     public void deleteSpending(Long spendingId, String loginId) {
-        User user = userService.getUser(loginId);
+        User user = findUser(loginId);
         Spending spending = getSpending(spendingId, user);
         spendingRepository.delete(spending);
     }
@@ -401,5 +405,15 @@ public class SpendingService {
     // 해당 날짜의 끝 시점 (23:59:59)
     private LocalDateTime getEndDateTime(LocalDate endDate) {
         return endDate.atTime(LocalTime.MAX).withNano(0);
+    }
+
+    private User findUser(String loginId) {
+        return userRepository.findByLoginId(loginId)
+            .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
+    }
+
+    private Category findCategory(String name) {
+        return categoryRepository.findByName(name)
+            .orElseThrow(() -> new NotFoundException(NOT_FOUND_CATEGORY));
     }
 }
