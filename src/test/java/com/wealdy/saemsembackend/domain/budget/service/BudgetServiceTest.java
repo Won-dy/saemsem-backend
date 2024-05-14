@@ -43,7 +43,7 @@ class BudgetServiceTest {
         userService = new UserService(userRepository);
 
         budgetRepository = new MockBudgetRepository();
-        budgetService = new BudgetService(budgetRepository, categoryService, userService);
+        budgetService = new BudgetService(budgetRepository, categoryService, userService, userRepository);
     }
 
     @DisplayName("[getBudgetList] 예산 목록 조회에 성공한다.")

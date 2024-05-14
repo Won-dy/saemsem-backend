@@ -1,5 +1,7 @@
 package com.wealdy.saemsembackend.domain.budget.service;
 
+import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FOUND_USER;
+
 import com.wealdy.saemsembackend.domain.budget.entity.Budget;
 import com.wealdy.saemsembackend.domain.budget.repository.BudgetRepository;
 import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetRecommendProjection;
@@ -7,7 +9,9 @@ import com.wealdy.saemsembackend.domain.budget.service.dto.BudgetSummaryDto;
 import com.wealdy.saemsembackend.domain.budget.service.dto.GetBudgetDto;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.category.service.CategoryService;
+import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
 import com.wealdy.saemsembackend.domain.user.entity.User;
+import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
 import com.wealdy.saemsembackend.domain.user.service.UserService;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,6 +30,7 @@ public class BudgetService {
     private final BudgetRepository budgetRepository;
     private final CategoryService categoryService;
     private final UserService userService;
+    private final UserRepository userRepository;
     private static final int MAX_RATIO = 10;  // 기타에 포함될 최대 비율
 
     // 예산 설정
@@ -72,7 +77,7 @@ public class BudgetService {
      */
     @Transactional(readOnly = true)
     public List<GetBudgetDto> recommendBudget(long budgetTotal, LocalDate date, String loginId) {
-        userService.getUser(loginId);
+        checkUser(loginId);
 
         List<GetBudgetDto> budgetDtoList = new ArrayList<>();
         Map<Long, Long> sumOfBudgetByUserMap = new HashMap<>();  // 유저별 예산 총합
@@ -133,5 +138,10 @@ public class BudgetService {
         budgetDtoList.add(GetBudgetDto.of("기타", etcRecommendAmount));
 
         return budgetDtoList;
+    }
+
+    private void checkUser(String loginId) {
+        userRepository.findByLoginId(loginId)
+            .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
     }
 }
