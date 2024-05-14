@@ -9,7 +9,6 @@ import com.wealdy.saemsembackend.domain.user.entity.User;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.repository.query.Param;
 
 public interface BudgetRepository {
 
@@ -17,11 +16,11 @@ public interface BudgetRepository {
 
     Optional<Budget> findByDateAndCategoryAndUser(LocalDate date, Category category, User user);
 
-    List<BudgetSummaryProjection> findByDateAndUser(@Param("date") LocalDate date, @Param("user") User user);
+    List<BudgetSummaryProjection> findByDateAndUser(LocalDate date, User user);
 
-    List<BudgetRecommendProjection> findByDate(@Param("date") LocalDate date);
+    List<BudgetRecommendProjection> findByDate(LocalDate date);
 
-    List<BudgetTotalProjection> sumByUser(@Param("date") LocalDate date);
+    List<BudgetTotalProjection> sumByUser(LocalDate date);
 
     Long findAmountByUserAndCategory(LocalDate date, User user, String categoryId);
 }
