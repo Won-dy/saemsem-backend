@@ -46,8 +46,8 @@ public class SpendingService {
     private final CategoryService categoryService;
     private final UserService userService;
 
-    private final static long MIN_RECOMMEND_AMOUNT = 1000; // 최소 추천 금액
-    private final static double SAVING_WELL_RATIO = 70.0; // 최소 추천 금액
+    private static final long MIN_RECOMMEND_AMOUNT = 1000; // 최소 추천 금액
+    private static final double SAVING_WELL_RATIO = 70.0; // 최소 추천 금액
 
     // 지출 생성
     @Transactional
