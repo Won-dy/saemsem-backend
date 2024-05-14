@@ -26,6 +26,7 @@ public class BudgetService {
     private final BudgetRepository budgetRepository;
     private final CategoryService categoryService;
     private final UserService userService;
+    private static final int MAX_RATIO = 10;  // 기타에 포함될 최대 비율
 
     // 예산 설정
     @Transactional
@@ -73,9 +74,7 @@ public class BudgetService {
     public List<GetBudgetDto> recommendBudget(long budgetTotal, LocalDate date, String loginId) {
         userService.getUser(loginId);
 
-        int MAX_RATIO = 10;  // 기타에 포함될 최대 비율
         List<GetBudgetDto> budgetDtoList = new ArrayList<>();
-
         Map<Long, Long> sumOfBudgetByUserMap = new HashMap<>();  // 유저별 예산 총합
         budgetRepository.sumByUser(date).forEach(projection -> sumOfBudgetByUserMap.put(projection.getUserId(), projection.getSumOfBudget()));
         int userCnt = sumOfBudgetByUserMap.size();  // user 수
