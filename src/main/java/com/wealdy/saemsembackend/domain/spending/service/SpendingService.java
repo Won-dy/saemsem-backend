@@ -193,7 +193,7 @@ public class SpendingService {
             recommendAmount = remainBudget / remainDayOfMonth;
 
             // 적정 금액 대비 사용 금액 비율
-            double usedRate = (double) usedAmount / (pastDayOfMonth * budgetOfDay) * 100;
+            long usedRate = usedAmount * 100 / (pastDayOfMonth * budgetOfDay);
             if (usedRate >= SAVING_WELL_RATIO) {  // 70% 이상이면 적당히 절약 중,
                 message = SpendingMessage.MODERATE_USAGE.getMessage();
             } else {  // 미만이면 완벽히 잘 절약 중
