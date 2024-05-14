@@ -95,7 +95,7 @@ public class BudgetService {
             // 카테고리 별 유저들이 설정한 예산 비율
             double categoryAmount = budget.getAmount();
             double totalAmount = sumOfBudgetByUserMap.get(budget.getUserId());
-            double ratio = (categoryAmount / totalAmount) * 100.0;
+            double ratio = categoryAmount * 100 / totalAmount;
             ratioSum += ratio;
 
             // 해당 카테고리의 예산이 아직 존재하면 계속 확인
@@ -109,16 +109,13 @@ public class BudgetService {
             double amount = budgetTotal * avgRatio / 100.0;
             long recommendAmount = Math.round(amount);
 
-            // 10% 미만인 카테고리의 비율 또는 기타 카테고리 비율
+            // 10% 미만인 카테고리의또는 기타 카테고리
             if (avgRatio < MAX_RATIO || categoryName.equals("기타")) {
                 etcRatioSum += avgRatio;  // 기타로 제공 될 카테고리 비율을 합하기
-                recommendAmount = 0;
-            }
-            recommendAmountTotal += recommendAmount;
-
-            // 기타를 제외한 카테고리는 예산 추천 객체 생성
-            if (!categoryName.equals("기타")) {
+            } else {
+                // 그 외 카테고리는 예산 추천 객체 생성
                 budgetDtoList.add(GetBudgetDto.of(categoryName, recommendAmount));
+                recommendAmountTotal += recommendAmount;
             }
 
             // 다음 카테고리 통계를 위한 초기화
@@ -126,7 +123,7 @@ public class BudgetService {
             ratioSum = 0;
         }
 
-        // 기타 카테고리는 모든 카테고리의 통계 계산이 끝난 후 예산 추천 객체 생성
+        // 기타 카테고리는 모든 카테고리의 통계 계산이 끝난 후 예산 추천 금액 계산 및 객체 생성
         long etcRecommendAmount = Math.round(budgetTotal * etcRatioSum / 100.0);
         // 추천 예산의 총 합에 기타 카테고리 합하기
         recommendAmountTotal += etcRecommendAmount;
