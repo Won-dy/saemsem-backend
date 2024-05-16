@@ -31,10 +31,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -292,13 +292,12 @@ public class SpendingService {
 
         // 카테고리 목록을 조회하여 카테고리명=금액 map 을 만든다.
         // -> 0원 쓴 카테고리도 조회 결과로 보여주기 위해서.
-        Map<String, Long> map = new HashMap<>();
         List<GetCategoryDto> categoryList = categoryRepository.findAll().stream()
             .map(GetCategoryDto::from)
             .toList();
-        for (GetCategoryDto categoryDto : categoryList) {
-            map.put(categoryDto.getName(), 0L);
-        }
+
+        Map<String, Long> map = categoryList.stream()
+            .collect(Collectors.toMap(GetCategoryDto::getName, categoryDto -> 0L));
 
         long spendingTotal = 0;
         for (GetSpendingDto spending : spendingList) {
