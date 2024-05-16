@@ -358,8 +358,8 @@ public class SpendingService {
 
         int categorySize = (category != null) ? category.size() : 0;
 
-        return spendingRepository.getSumOfAmountGroupByCategory(startDateTime, endDateTime, categorySize, category, minAmount, maxAmount, user.getId())
-            .stream()
+        return spendingRepository
+            .getSumOfAmountGroupByCategory(startDateTime, endDateTime, categorySize, category, minAmount, maxAmount, user.getId()).stream()
             .map(projection -> GetSpendingSummaryDto.of(projection.getCategoryName(), projection.getAmount()))
             .toList();
     }
