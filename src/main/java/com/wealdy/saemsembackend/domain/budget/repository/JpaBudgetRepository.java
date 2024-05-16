@@ -25,7 +25,7 @@ public interface JpaBudgetRepository extends JpaRepository<Budget, Long> {
         + "left join Budget b on c.id = b.category.id and b.date = :date")
     List<BudgetRecommendProjection> findByDate(@Param("date") LocalDate date);
 
-    @Query(value = "select b.user.id as userId, sum(b.amount) as sumOfBudget from Budget b "
+    @Query(value = "select b.user as user, sum(b.amount) as sumOfBudget from Budget b "
         + "where b.date = :date group by b.user")
     List<BudgetTotalProjection> getSumOfBudgetByDateGroupByUser(@Param("date") LocalDate date);
 
