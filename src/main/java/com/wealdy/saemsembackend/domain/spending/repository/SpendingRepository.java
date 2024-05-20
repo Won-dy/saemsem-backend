@@ -17,6 +17,13 @@ public interface SpendingRepository extends JpaRepository<Spending, Long>, JpaSp
 
     Optional<Spending> findByIdAndUser(Long id, User user);
 
+    @Query(value = "select coalesce(sum(s.amount), 0) from Spending s where s.date between :startDate and :endDate and s.user = :user")
+    Long getSumOfAmountByDateAndUser(
+        @Param("startDate") LocalDateTime startDate,
+        @Param("endDate") LocalDateTime endDate,
+        @Param("user") User user
+    );
+
     @Query(value = "select s from Spending s join fetch s.category "
         + "where s.date between :startDate and :endDate and s.user = :user "
         + "and (:minAmount is null or s.amount >= :minAmount) "

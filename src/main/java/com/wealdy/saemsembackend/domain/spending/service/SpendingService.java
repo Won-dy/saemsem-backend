@@ -5,6 +5,7 @@ import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FO
 import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FOUND_USER;
 
 import com.wealdy.saemsembackend.domain.budget.repository.BudgetRepository;
+import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetTotalProjection;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.category.repository.CategoryRepository;
 import com.wealdy.saemsembackend.domain.category.service.dto.GetCategoryDto;
@@ -20,8 +21,10 @@ import com.wealdy.saemsembackend.domain.spending.repository.projection.SpendingR
 import com.wealdy.saemsembackend.domain.spending.repository.projection.SpendingTodayProjection;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingListDto;
+import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingMonthlyByCategoryDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingRecommendByCategoryDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingRecommendDto;
+import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingStatisticsDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingSummaryDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingTodayByCategoryDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingTodayDto;
@@ -265,6 +268,154 @@ public class SpendingService {
         }
 
         return GetSpendingTodayDto.of(todaySpendingTotal, todaySpendingTotalByCategory);
+    }
+
+    /*
+        지출 통계
+     */
+    public GetSpendingStatisticsDto spendingStatistics(String loginId) {
+        User user = findUser(loginId);
+
+        // 날짜 정보 얻기
+        LocalDate today = LocalDate.now();  // 오늘 날짜
+        LocalDate firstDayOfThisMonth = today.withDayOfMonth(1);  // 이번 달의 1일 날짜
+        LocalDate lastMonth = today.minusMonths(1);  // 지난 달 날짜
+        LocalDate firstDayOfLastMonth = lastMonth.withDayOfMonth(1);  // 지난 달의 1일 날짜
+        LocalDate lastWeek = today.minusWeeks(1);  // 지난 요일 날짜
+
+        // 지난 달 대비 소비율 - 총액 소비율
+        long monthlyTotalSpendingRate = calculateMonthlyTotalSpendingRate(today, firstDayOfThisMonth, lastMonth, firstDayOfLastMonth, user);
+
+        // 지난 달 대비 소비율 - 카테고리 별 소비율
+        List<GetSpendingMonthlyByCategoryDto> monthlyCategorySpendingRate =
+            calculateMonthlyCategorySpendingRate(today, firstDayOfThisMonth, lastMonth, firstDayOfLastMonth, user);
+
+        // 지난 요일 대비 소비율
+        long weeklySpendingRate = calculateWeeklySpendingRate(today, lastWeek, user);
+
+        // 다른 유저 대비 소비율
+        long spendingRateComparedToOthers = calculateSpendingRateComparedToOthers(today, firstDayOfThisMonth, loginId, user);
+
+        return GetSpendingStatisticsDto.of(
+            spendingRateComparedToOthers + "%",
+            weeklySpendingRate + "%",
+            monthlyTotalSpendingRate + "%",
+            monthlyCategorySpendingRate
+        );
+    }
+
+    /*
+     * 지난 달 대비 소비율 - 총액 소비율
+     */
+    private long calculateMonthlyTotalSpendingRate(
+        LocalDate today,
+        LocalDate firstDayOfThisMonth,
+        LocalDate lastMonth,
+        LocalDate firstDayOfLastMonth,
+        User user
+    ) {
+        // 이번 달 사용 금액
+        long usedAmountInThisMonth =
+            spendingRepository.getSumOfAmountByDateAndUser(getStartDateTime(firstDayOfThisMonth), getEndDateTime(today), user);
+        // 지난 달 사용 금액
+        long usedAmountInLastMonth =
+            spendingRepository.getSumOfAmountByDateAndUser(getStartDateTime(firstDayOfLastMonth), getEndDateTime(lastMonth), user);
+        // 0원이면 이번 달 사용 금액을 % 로 표시하므로 100으로 치환한다.
+        if (usedAmountInLastMonth == 0) {
+            usedAmountInLastMonth = 100;
+        }
+
+        return usedAmountInThisMonth * 100 / usedAmountInLastMonth;
+    }
+
+    /*
+     * 지난 달 대비 소비율 - 카테고리 별 소비율
+     */
+    private List<GetSpendingMonthlyByCategoryDto> calculateMonthlyCategorySpendingRate(
+        LocalDate today,
+        LocalDate firstDayOfThisMonth,
+        LocalDate lastMonth,
+        LocalDate firstDayOfLastMonth,
+        User user
+    ) {
+        // 카테고리 별 이번 달 사용 금액
+        List<SpendingTodayProjection> usedAmountByCategoryInThisMonth =
+            spendingRepository.getSumOfAmountGroupByCategory(getStartDateTime(firstDayOfThisMonth), getEndDateTime(today), user);
+        // 카테고리 별 지난 달 사용 금액
+        List<SpendingTodayProjection> usedAmountByCategoryInLastMonth =
+            spendingRepository.getSumOfAmountGroupByCategory(getStartDateTime(firstDayOfLastMonth), getEndDateTime(lastMonth), user);
+
+        List<GetSpendingMonthlyByCategoryDto> monthlyCategorySpendingRate = new ArrayList<>();
+        for (int i = 0; i < usedAmountByCategoryInThisMonth.size(); i++) {
+            long usedAmountInThisMonth = usedAmountByCategoryInThisMonth.get(i).getUsedAmount();
+            long usedAmountInLastMonth = usedAmountByCategoryInLastMonth.get(i).getUsedAmount();
+            // 0원이면 이번 달 사용 금액을 % 로 표시하므로 100으로 치환한다.
+            if (usedAmountInLastMonth == 0) {
+                usedAmountInLastMonth = 100;
+            }
+            long spendingRate = usedAmountInThisMonth * 100 / usedAmountInLastMonth;
+
+            monthlyCategorySpendingRate.add(
+                GetSpendingMonthlyByCategoryDto.of(usedAmountByCategoryInThisMonth.get(i).getCategory().getName(), spendingRate + "%")
+            );
+        }
+
+        return monthlyCategorySpendingRate;
+    }
+
+    /*
+     * 지난 요일 대비 소비율 계산
+     */
+    private long calculateWeeklySpendingRate(LocalDate today, LocalDate lastWeek, User user) {
+        // 오늘 사용 금액
+        long usedAmountToday = spendingRepository.getSumOfAmountByDateAndUser(getStartDateTime(today), getEndDateTime(today), user);
+        // 지난 요일 사용 금액
+        long usedAmountInLastWeeks = spendingRepository.getSumOfAmountByDateAndUser(getStartDateTime(lastWeek), getEndDateTime(lastWeek), user);
+        // 0원이면 오늘 사용 금액을 % 로 표시하므로 100으로 치환한다.
+        if (usedAmountInLastWeeks == 0) {
+            usedAmountInLastWeeks = 100;
+        }
+
+        return usedAmountToday * 100 / usedAmountInLastWeeks;
+    }
+
+    /*
+     * 다른 유저 대비 소비율
+     */
+    private long calculateSpendingRateComparedToOthers(
+        LocalDate today,
+        LocalDate firstDayOfThisMonth,
+        String loginId,
+        User user
+    ) {
+        // 모든 유저들의 예산 대비 사용한 비율의 합
+        long rateSum = 0;
+        long mySpendingRate = 0;
+
+        // 다른 유저들의 이번 달 총 예산
+        List<BudgetTotalProjection> usersBudgetTotal = budgetRepository.getSumOfBudgetGroupByUser(firstDayOfThisMonth);
+        for (BudgetTotalProjection budgetTotal : usersBudgetTotal) {
+            // 나의 소비율
+            if (loginId.equals(budgetTotal.getUser().getLoginId())) {
+                // 이번 달 사용 금액
+                long usedAmountInThisMonth =
+                    spendingRepository.getSumOfAmountByDateAndUser(getStartDateTime(firstDayOfThisMonth), getEndDateTime(today), user);
+                mySpendingRate = usedAmountInThisMonth * 100 / budgetTotal.getSumOfBudget();
+                continue;
+            }
+
+            // 오늘까지 소비한 지출
+            long usedAmount = spendingRepository.getSumOfAmountByDateAndUser(getStartDateTime(firstDayOfThisMonth),
+                getEndDateTime(today), budgetTotal.getUser());
+
+            // 다른 유저의 소비율
+            long spendingRate = usedAmount * 100 / budgetTotal.getSumOfBudget();
+            rateSum += spendingRate;
+        }
+        int userCnt = usersBudgetTotal.size();
+        long rateAverage = rateSum / (userCnt - 1);
+
+        return mySpendingRate * 100 / rateAverage;
     }
 
     /*
