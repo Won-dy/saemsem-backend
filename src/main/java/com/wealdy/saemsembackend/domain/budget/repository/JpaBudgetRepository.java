@@ -17,7 +17,7 @@ public interface JpaBudgetRepository extends JpaRepository<Budget, Long> {
 
     Optional<Budget> findByDateAndCategoryAndUser(LocalDate date, Category category, User user);
 
-    @Query(value = "select c.name as categoryName, coalesce(b.amount, 0) as amount from Category c "
+    @Query(value = "select c.name as categoryName, b.amount as amount from Category c "
         + "left join Budget b on c.id = b.category.id and b.date = :date and b.user = :user")
     List<BudgetSummaryProjection> findByDateAndUser(@Param("date") LocalDate date, @Param("user") User user);
 
