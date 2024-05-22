@@ -77,7 +77,7 @@ public class BudgetService {
      */
     @Transactional(readOnly = true)
     public List<GetBudgetDto> recommendBudget(long budgetTotal, LocalDate date, String loginId) {
-        checkUser(loginId);
+        checkExistUser(loginId);
 
         List<GetBudgetDto> budgetDtoList = new ArrayList<>();
         Map<Long, Long> sumOfBudgetByUserMap = new HashMap<>();  // 유저별 예산 총합
@@ -146,8 +146,10 @@ public class BudgetService {
             .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
     }
 
-    private void checkUser(String loginId) {
-        userRepository.findByLoginId(loginId)
-            .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
+    private void checkExistUser(String loginId) {
+        Optional<User> user = userRepository.findByLoginId(loginId);
+        if (user.isEmpty()) {
+            throw new NotFoundException(NOT_FOUND_USER);
+        }
     }
 }
