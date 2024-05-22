@@ -58,7 +58,7 @@ public class BudgetController {
      */
     @GetMapping("/recommend")
     public Response<BudgetRecommendResponse> recommendBudget(
-        @RequestParam @PositiveOrZero(message = "금액은 0원 이상으로 입력해야 합니다.") long budgetTotal,
+        @RequestParam @Positive(message = "금액은 1원 이상으로 입력해야 합니다.") long budgetTotal,
         @RequestParam @Positive(message = "년도는 0 이상으로 입력해야 합니다.") int year,
         @RequestParam @Range(min = 1, max = 12, message = "월은 1~12 범위 내에서 입력해야 합니다.") int month,
         @RequestAttribute(name = LOGIN_ID_KEY) String loginId

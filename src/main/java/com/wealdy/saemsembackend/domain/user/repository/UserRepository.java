@@ -7,9 +7,7 @@ public interface UserRepository {
 
     void save(User user);
 
-    Optional<User> findByLoginId(String id);
+    Optional<User> findByLoginId(String loginId);
 
     Optional<User> findByNickname(String nickname);
-
-    Optional<User> findByLoginIdAndPassword(String id, String password);
 }

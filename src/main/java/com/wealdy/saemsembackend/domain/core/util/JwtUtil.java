@@ -29,8 +29,8 @@ public class JwtUtil {
         return instance;
     }
 
-    private final static String secret = "djtyS5dopy5dfNt9dfgPmwch5d6klsg0sdlk1kYDgp";
-    private final static int ACCESS_TOKEN_EXPIRATION = 86400;  // 1 DAY
+    private static final String secret = "djtyS5dopy5dfNt9dfgPmwch5d6klsg0sdlk1kYDgp";
+    private static final int ACCESS_TOKEN_EXPIRATION = 86400;  // 1 DAY
 
     public String createAccessToken(String loginId) {
         return createToken(loginId, ACCESS_TOKEN_EXPIRATION);

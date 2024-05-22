@@ -10,13 +10,11 @@ import com.wealdy.saemsembackend.domain.budget.service.dto.GetBudgetDto;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.category.mock.MockCategoryRepository;
 import com.wealdy.saemsembackend.domain.category.repository.CategoryRepository;
-import com.wealdy.saemsembackend.domain.category.service.CategoryService;
 import com.wealdy.saemsembackend.domain.core.enums.YnColumn;
 import com.wealdy.saemsembackend.domain.core.util.DateUtils;
 import com.wealdy.saemsembackend.domain.user.entity.User;
 import com.wealdy.saemsembackend.domain.user.mock.MockUserRepository;
 import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
-import com.wealdy.saemsembackend.domain.user.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,22 +26,18 @@ class BudgetServiceTest {
 
     BudgetRepository budgetRepository;
     BudgetService budgetService;
-    CategoryService categoryService;
     CategoryRepository categoryRepository;
-    UserService userService;
     UserRepository userRepository;
 
 
     @BeforeEach
     void init() {
         categoryRepository = new MockCategoryRepository();
-        categoryService = new CategoryService(categoryRepository);
 
         userRepository = new MockUserRepository();
-        userService = new UserService(userRepository);
 
         budgetRepository = new MockBudgetRepository();
-        budgetService = new BudgetService(budgetRepository, categoryService, userService);
+        budgetService = new BudgetService(budgetRepository, categoryRepository, userRepository);
     }
 
     @DisplayName("[getBudgetList] 예산 목록 조회에 성공한다.")

@@ -29,12 +29,4 @@ public class MockUserRepository implements UserRepository {
             .filter(user -> user.getNickname().equals(nickname))
             .findFirst();
     }
-
-    @Override
-    public Optional<User> findByLoginIdAndPassword(String loginId, String password) {
-        return users.stream()
-            .filter(user -> user.getLoginId().equals(loginId))
-            .filter(user -> user.getPassword().equals(password))
-            .findFirst();
-    }
 }

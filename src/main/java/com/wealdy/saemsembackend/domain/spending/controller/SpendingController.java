@@ -14,6 +14,7 @@ import com.wealdy.saemsembackend.domain.spending.controller.response.SpendingRes
 import com.wealdy.saemsembackend.domain.spending.service.SpendingService;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingListDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingRecommendDto;
+import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingStatisticsDto;
 import com.wealdy.saemsembackend.domain.spending.service.dto.GetSpendingTodayDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
@@ -71,8 +72,7 @@ public class SpendingController {
     }
 
     /**
-     * 지출 목록 조회 API (with Java)
-     * java 로 처리 로직 구현
+     * 지출 목록 조회 API (with Java) java 로 처리 로직 구현
      */
     @GetMapping
     public Response<GetSpendingListDto> getSpendingList(
@@ -90,8 +90,7 @@ public class SpendingController {
     }
 
     /**
-     * 지출 목록 조회 API (with Query)
-     * 쿼리로 모든 응답 값들을 조회
+     * 지출 목록 조회 API (with Query) 쿼리로 모든 응답 값들을 조회
      */
     @GetMapping("/query")
     public Response<SpendingListResponse> getSpendingListWithQuery(
@@ -153,6 +152,14 @@ public class SpendingController {
     @GetMapping("/today")
     public Response<GetSpendingTodayDto> spendingToday(@RequestAttribute(name = LOGIN_ID_KEY) String loginId) {
         return Response.of(spendingService.spendingToday(loginId));
+    }
+
+    /**
+     * 지출 통계 API
+     */
+    @GetMapping("/statistics")
+    public Response<GetSpendingStatisticsDto> spendingStatistics(@RequestAttribute(name = LOGIN_ID_KEY) String loginId) {
+        return Response.of(spendingService.spendingStatistics(loginId));
     }
 
     /**

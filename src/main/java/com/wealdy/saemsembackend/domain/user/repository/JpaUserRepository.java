@@ -18,9 +18,9 @@ public class JpaUserRepository implements UserRepository {
         em.persist(user);
     }
 
-    public Optional<User> findByLoginId(String id) {
+    public Optional<User> findByLoginId(String loginId) {
         TypedQuery<User> query = em.createQuery("select u from User u where u.loginId = :id", User.class)
-            .setParameter("id", id);
+            .setParameter("id", loginId);
         try {
             return Optional.ofNullable(query.getSingleResult());
         } catch (NoResultException e) {
@@ -31,17 +31,6 @@ public class JpaUserRepository implements UserRepository {
     public Optional<User> findByNickname(String nickname) {
         TypedQuery<User> query = em.createQuery("select u from User u where u.nickname = :nickname", User.class)
             .setParameter("nickname", nickname);
-        try {
-            return Optional.ofNullable(query.getSingleResult());
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
-    }
-
-    public Optional<User> findByLoginIdAndPassword(String id, String password) {
-        TypedQuery<User> query = em.createQuery("select u from User u where u.loginId = :id and u.password = :password", User.class)
-            .setParameter("id", id)
-            .setParameter("password", password);
         try {
             return Optional.ofNullable(query.getSingleResult());
         } catch (NoResultException e) {

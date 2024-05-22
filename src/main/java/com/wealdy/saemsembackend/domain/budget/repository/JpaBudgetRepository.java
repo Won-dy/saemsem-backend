@@ -17,7 +17,7 @@ public interface JpaBudgetRepository extends JpaRepository<Budget, Long> {
 
     Optional<Budget> findByDateAndCategoryAndUser(LocalDate date, Category category, User user);
 
-    @Query(value = "select c.name as categoryName, coalesce(b.amount, 0) as amount from Category c "
+    @Query(value = "select c.name as categoryName, b.amount as amount from Category c "
         + "left join Budget b on c.id = b.category.id and b.date = :date and b.user = :user")
     List<BudgetSummaryProjection> findByDateAndUser(@Param("date") LocalDate date, @Param("user") User user);
 
@@ -25,9 +25,9 @@ public interface JpaBudgetRepository extends JpaRepository<Budget, Long> {
         + "left join Budget b on c.id = b.category.id and b.date = :date")
     List<BudgetRecommendProjection> findByDate(@Param("date") LocalDate date);
 
-    @Query(value = "select b.user.id as userId, sum(b.amount) as sumOfBudget from Budget b "
+    @Query(value = "select b.user as user, sum(b.amount) as sumOfBudget from Budget b "
         + "where b.date = :date group by b.user")
-    List<BudgetTotalProjection> sumByUser(@Param("date") LocalDate date);
+    List<BudgetTotalProjection> getSumOfBudgetByDateGroupByUser(@Param("date") LocalDate date);
 
     @Query(value = "select b.amount from Budget b where b.date = :date and b.user = :user and b.category.name = :category")
     Long findAmountByUserAndCategory(@Param("date") LocalDate date, @Param("user") User user, @Param("category") String category);

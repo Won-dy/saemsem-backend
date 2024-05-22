@@ -39,8 +39,8 @@ public class DefaultBudgetRepository implements BudgetRepository {
     }
 
     @Override
-    public List<BudgetTotalProjection> sumByUser(LocalDate date) {
-        return jpaBudgetRepository.sumByUser(date);
+    public List<BudgetTotalProjection> getSumOfBudgetGroupByUser(LocalDate date) {
+        return jpaBudgetRepository.getSumOfBudgetByDateGroupByUser(date);
     }
 
     @Override

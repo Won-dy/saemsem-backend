@@ -1,8 +1,10 @@
 package com.wealdy.saemsembackend.domain.budget.repository.projection;
 
+import com.wealdy.saemsembackend.domain.user.entity.User;
+
 public interface BudgetTotalProjection {
 
-    Long getUserId();
+    User getUser();
 
     Long getSumOfBudget();
 }
