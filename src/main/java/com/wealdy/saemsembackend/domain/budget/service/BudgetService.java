@@ -87,7 +87,7 @@ public class BudgetService {
 
         long recommendAmountTotal = 0;  // 추천 예산의 총 합
         int countForCategory = 0;  // 현재 카테고리로 설정된 예산 개수 카운트
-        double ratioSum = 0;  // 카테고리 별 예산 비율 합계
+        long ratioSum = 0;  // 카테고리 별 예산 비율 합계
         long etcRatioSum = 0;  // 기타로 제공 될 카테고리 비율의 합
 
         // 카테고리 별 유저들의 예산 목록
@@ -98,9 +98,9 @@ public class BudgetService {
             String categoryName = budget.getCategoryName();
 
             // 카테고리 별 유저들이 설정한 예산 비율
-            double categoryAmount = budget.getAmount();
-            double totalAmount = sumOfBudgetByUserMap.get(budget.getUserId());
-            double ratio = categoryAmount * 100 / totalAmount;
+            long categoryAmount = budget.getAmount();
+            long totalAmount = sumOfBudgetByUserMap.get(budget.getUserId());
+            long ratio = categoryAmount * 100 / totalAmount;
             ratioSum += ratio;
 
             // 해당 카테고리의 예산이 아직 존재하면 계속 확인
@@ -110,11 +110,11 @@ public class BudgetService {
 
             // 해당 카테고리의 예산을 모두 확인했다면
             // 평균 비율 및 추천 금액 계산
-            long avgRatio = Math.round(ratioSum / (double) userCnt);
-            double amount = budgetTotal * avgRatio / 100.0;
+            long avgRatio = ratioSum / userCnt;
+            long amount = budgetTotal * avgRatio / 100;
             long recommendAmount = Math.round(amount);
 
-            // 10% 미만인 카테고리의또는 기타 카테고리
+            // 10% 미만인 카테고리 또는 기타 카테고리
             if (avgRatio < MAX_RATIO || categoryName.equals("기타")) {
                 etcRatioSum += avgRatio;  // 기타로 제공 될 카테고리 비율을 합하기
             } else {
