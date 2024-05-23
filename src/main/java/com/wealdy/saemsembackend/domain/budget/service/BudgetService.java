@@ -83,7 +83,7 @@ public class BudgetService {
         Map<Long, Long> sumOfBudgetByUserMap = new HashMap<>();  // 유저별 예산 총합
         budgetRepository.getSumOfBudgetGroupByUser(date)
             .forEach(projection -> sumOfBudgetByUserMap.put(projection.getUser().getId(), projection.getSumOfBudget()));
-        int userCnt = sumOfBudgetByUserMap.size();  // user 수
+        int userCount = sumOfBudgetByUserMap.size();  // user 수
 
         long recommendAmountTotal = 0;  // 추천 예산의 총 합
         int countForCategory = 0;  // 현재 카테고리로 설정된 예산 개수 카운트
@@ -104,13 +104,13 @@ public class BudgetService {
             ratioSum += ratio;
 
             // 해당 카테고리의 예산이 아직 존재하면 계속 확인
-            if (countForCategory != userCnt) {
+            if (countForCategory != userCount) {
                 continue;
             }
 
             // 해당 카테고리의 예산을 모두 확인했다면
             // 평균 비율 및 추천 금액 계산
-            long avgRatio = ratioSum / userCnt;
+            long avgRatio = ratioSum / userCount;
             long amount = budgetTotal * avgRatio / 100;
             long recommendAmount = Math.round(amount);
 

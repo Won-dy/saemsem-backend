@@ -400,8 +400,8 @@ public class SpendingService {
             long spendingRate = usedAmount * 100 / budgetTotal.getSumOfBudget();
             rateSum += spendingRate;
         }
-        int userCnt = usersBudgetTotal.size();
-        long rateAverage = rateSum / (userCnt - 1);
+        int userCount = usersBudgetTotal.size();
+        long rateAverage = rateSum / (userCount - 1);
 
         return mySpendingRate * 100 / rateAverage;
     }
