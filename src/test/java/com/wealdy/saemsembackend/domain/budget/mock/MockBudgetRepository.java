@@ -2,8 +2,6 @@ package com.wealdy.saemsembackend.domain.budget.mock;
 
 import com.wealdy.saemsembackend.domain.budget.entity.Budget;
 import com.wealdy.saemsembackend.domain.budget.repository.BudgetRepository;
-import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetRecommendProjection;
-import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetSummaryProjection;
 import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetTotalProjection;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.user.entity.User;
@@ -15,13 +13,10 @@ import java.util.Optional;
 public class MockBudgetRepository implements BudgetRepository {
 
     private final List<Budget> budgetList = new ArrayList<>();
-    private final List<BudgetSummaryProjection> budgetSummaryProjection = new ArrayList<>();
 
     @Override
     public Budget save(Budget budget) {
-        budgetList.removeIf(removeBudget -> {
-            return removeBudget.getId().equals(budget.getId());
-        });
+        budgetList.removeIf(removeBudget -> removeBudget.getId().equals(budget.getId()));
         budgetList.add(budget);
         return budget;
     }
@@ -36,39 +31,15 @@ public class MockBudgetRepository implements BudgetRepository {
     }
 
     @Override
-    public List<BudgetSummaryProjection> findByDateAndUser(LocalDate date, User user) {
-        budgetSummaryProjection.clear();
-        budgetSummaryProjection.add(
-            new BudgetSummaryProjection() {
-                @Override
-                public String getCategoryName() {
-                    return "기타";
-                }
-
-                @Override
-                public Long getAmount() {
-                    return 100000L;
-                }
-            }
-        );
-        budgetSummaryProjection.add(
-            new BudgetSummaryProjection() {
-                @Override
-                public String getCategoryName() {
-                    return "식비";
-                }
-
-                @Override
-                public Long getAmount() {
-                    return 333333L;
-                }
-            }
-        );
-        return budgetSummaryProjection;
+    public List<Budget> findByDateAndUser(LocalDate date, User user) {
+        return budgetList.stream()
+            .filter(budget -> budget.getDate().equals(date))
+            .filter(budget -> budget.getUser().equals(user))
+            .toList();
     }
 
     @Override
-    public List<BudgetRecommendProjection> findByDate(LocalDate date) {
+    public List<Budget> findByDate(LocalDate date) {
         return null;
     }
 

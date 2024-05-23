@@ -1,8 +1,6 @@
 package com.wealdy.saemsembackend.domain.budget.repository;
 
 import com.wealdy.saemsembackend.domain.budget.entity.Budget;
-import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetRecommendProjection;
-import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetSummaryProjection;
 import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetTotalProjection;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.user.entity.User;
@@ -16,9 +14,9 @@ public interface BudgetRepository {
 
     Optional<Budget> findByDateAndCategoryAndUser(LocalDate date, Category category, User user);
 
-    List<BudgetSummaryProjection> findByDateAndUser(LocalDate date, User user);
+    List<Budget> findByDateAndUser(LocalDate date, User user);
 
-    List<BudgetRecommendProjection> findByDate(LocalDate date);
+    List<Budget> findByDate(LocalDate date);
 
     List<BudgetTotalProjection> getSumOfBudgetGroupByUser(LocalDate date);
 

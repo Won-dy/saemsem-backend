@@ -5,7 +5,6 @@ import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FO
 
 import com.wealdy.saemsembackend.domain.budget.entity.Budget;
 import com.wealdy.saemsembackend.domain.budget.repository.BudgetRepository;
-import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetRecommendProjection;
 import com.wealdy.saemsembackend.domain.budget.service.dto.BudgetSummaryDto;
 import com.wealdy.saemsembackend.domain.budget.service.dto.GetBudgetDto;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
@@ -57,8 +56,9 @@ public class BudgetService {
     @Transactional(readOnly = true)
     public List<GetBudgetDto> getBudgetList(LocalDate date, String loginId) {
         User user = findUser(loginId);
+        findCategoryList();
         return budgetRepository.findByDateAndUser(date, user).stream()
-            .map(projection -> GetBudgetDto.of(projection.getCategoryName(), projection.getAmount()))
+            .map(budget -> GetBudgetDto.of(budget.getCategory().getName(), budget.getAmount()))
             .toList();
     }
 
@@ -78,6 +78,7 @@ public class BudgetService {
     @Transactional(readOnly = true)
     public List<GetBudgetDto> recommendBudget(long budgetTotal, LocalDate date, String loginId) {
         checkExistUser(loginId);
+        findCategoryList();
 
         List<GetBudgetDto> budgetDtoList = new ArrayList<>();
         Map<Long, Long> sumOfBudgetByUserMap = new HashMap<>();  // 유저별 예산 총합
@@ -91,15 +92,15 @@ public class BudgetService {
         long etcRatioSum = 0;  // 기타로 제공 될 카테고리 비율의 합
 
         // 카테고리 별 유저들의 예산 목록
-        List<BudgetRecommendProjection> budgetList = budgetRepository.findByDate(date);
-        for (BudgetRecommendProjection budget : budgetList) {
+        List<Budget> budgetList = budgetRepository.findByDate(date);
+        for (Budget budget : budgetList) {
             countForCategory++;
 
-            String categoryName = budget.getCategoryName();
+            String categoryName = budget.getCategory().getName();
 
             // 카테고리 별 유저들이 설정한 예산 비율
             long categoryAmount = budget.getAmount();
-            long totalAmount = sumOfBudgetByUserMap.get(budget.getUserId());
+            long totalAmount = sumOfBudgetByUserMap.get(budget.getUser().getId());
             long ratio = categoryAmount * 100 / totalAmount;
             ratioSum += ratio;
 
@@ -151,5 +152,10 @@ public class BudgetService {
         if (user.isEmpty()) {
             throw new NotFoundException(NOT_FOUND_USER);
         }
+    }
+
+    // 1차 캐시에 Category Entity 를 저장하기 위한 메소드
+    private void findCategoryList() {
+        categoryRepository.findAll();
     }
 }

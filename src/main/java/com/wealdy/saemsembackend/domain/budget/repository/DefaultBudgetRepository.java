@@ -1,8 +1,6 @@
 package com.wealdy.saemsembackend.domain.budget.repository;
 
 import com.wealdy.saemsembackend.domain.budget.entity.Budget;
-import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetRecommendProjection;
-import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetSummaryProjection;
 import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetTotalProjection;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.user.entity.User;
@@ -29,12 +27,12 @@ public class DefaultBudgetRepository implements BudgetRepository {
     }
 
     @Override
-    public List<BudgetSummaryProjection> findByDateAndUser(LocalDate date, User user) {
+    public List<Budget> findByDateAndUser(LocalDate date, User user) {
         return jpaBudgetRepository.findByDateAndUser(date, user);
     }
 
     @Override
-    public List<BudgetRecommendProjection> findByDate(LocalDate date) {
+    public List<Budget> findByDate(LocalDate date) {
         return jpaBudgetRepository.findByDate(date);
     }
 
