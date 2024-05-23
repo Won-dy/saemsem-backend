@@ -8,7 +8,6 @@ import com.wealdy.saemsembackend.domain.budget.repository.BudgetRepository;
 import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetTotalProjection;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.category.repository.CategoryRepository;
-import com.wealdy.saemsembackend.domain.category.service.dto.GetCategoryDto;
 import com.wealdy.saemsembackend.domain.core.enums.SpendingMessage;
 import com.wealdy.saemsembackend.domain.core.enums.YnColumn;
 import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
@@ -431,12 +430,8 @@ public class SpendingService {
 
         // 카테고리 목록을 조회하여 카테고리명=금액 map 을 만든다.
         // -> 0원 쓴 카테고리도 조회 결과로 보여주기 위해서.
-        List<GetCategoryDto> categoryList = categoryRepository.findAll().stream()
-            .map(GetCategoryDto::from)
-            .toList();
-
-        Map<String, Long> map = categoryList.stream()
-            .collect(Collectors.toMap(GetCategoryDto::getName, categoryDto -> 0L));
+        Map<String, Long> amountByCategory = categoryRepository.findAll().stream()
+            .collect(Collectors.toMap(Category::getName, category1 -> 0L));
 
         long spendingTotal = 0;
         for (GetSpendingDto spending : spendingList) {
@@ -445,12 +440,12 @@ public class SpendingService {
             }
 
             spendingTotal += spending.getAmount();  // 지출 합계
-            map.replace(spending.getCategoryName(), map.get(spending.getCategoryName()) + spending.getAmount());  // 카테고리별 지출합계
+            amountByCategory.merge(spending.getCategoryName(), spending.getAmount(), (Long::sum));  // 카테고리별 지출합계
         }
 
         // map to List<GetSpendingSummaryDto>
         List<GetSpendingSummaryDto> spendingTotalByCategory = new ArrayList<>();
-        for (Entry<String, Long> entry : map.entrySet()) {
+        for (Entry<String, Long> entry : amountByCategory.entrySet()) {
             spendingTotalByCategory.add(GetSpendingSummaryDto.of(entry.getKey(), entry.getValue()));
         }
 
