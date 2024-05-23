@@ -320,12 +320,8 @@ public class SpendingService {
         // 지난 달 사용 금액
         long usedAmountInLastMonth =
             spendingRepository.getSumOfAmountByDateAndUser(getStartDateTime(firstDayOfLastMonth), getEndDateTime(lastMonth), user);
-        // 0원이면 이번 달 사용 금액을 % 로 표시하므로 100으로 치환한다.
-        if (usedAmountInLastMonth == 0) {
-            usedAmountInLastMonth = 100;
-        }
 
-        return usedAmountInThisMonth * 100 / usedAmountInLastMonth;
+        return calculateRate(usedAmountInLastMonth, usedAmountInThisMonth);
     }
 
     /*
@@ -349,11 +345,7 @@ public class SpendingService {
         for (int i = 0; i < usedAmountByCategoryInThisMonth.size(); i++) {
             long usedAmountInThisMonth = usedAmountByCategoryInThisMonth.get(i).getUsedAmount();
             long usedAmountInLastMonth = usedAmountByCategoryInLastMonth.get(i).getUsedAmount();
-            // 0원이면 이번 달 사용 금액을 % 로 표시하므로 100으로 치환한다.
-            if (usedAmountInLastMonth == 0) {
-                usedAmountInLastMonth = 100;
-            }
-            long spendingRate = usedAmountInThisMonth * 100 / usedAmountInLastMonth;
+            long spendingRate = calculateRate(usedAmountInLastMonth, usedAmountInThisMonth);
 
             monthlyCategorySpendingRate.add(
                 GetSpendingMonthlyByCategoryDto.of(usedAmountByCategoryInThisMonth.get(i).getCategory().getName(), spendingRate + "%")
@@ -371,12 +363,8 @@ public class SpendingService {
         long usedAmountToday = spendingRepository.getSumOfAmountByDateAndUser(getStartDateTime(today), getEndDateTime(today), user);
         // 지난 요일 사용 금액
         long usedAmountInLastWeeks = spendingRepository.getSumOfAmountByDateAndUser(getStartDateTime(lastWeek), getEndDateTime(lastWeek), user);
-        // 0원이면 오늘 사용 금액을 % 로 표시하므로 100으로 치환한다.
-        if (usedAmountInLastWeeks == 0) {
-            usedAmountInLastWeeks = 100;
-        }
 
-        return usedAmountToday * 100 / usedAmountInLastWeeks;
+        return calculateRate(usedAmountInLastWeeks, usedAmountToday);
     }
 
     /*
@@ -565,5 +553,13 @@ public class SpendingService {
     private Category findCategory(String name) {
         return categoryRepository.findByName(name)
             .orElseThrow(() -> new NotFoundException(NOT_FOUND_CATEGORY));
+    }
+
+    // 비율 구하기
+    private long calculateRate(long previousAmount, long currentAmount) {
+        if (previousAmount == 0) {
+            return currentAmount;
+        }
+        return currentAmount * 100 / previousAmount;
     }
 }
