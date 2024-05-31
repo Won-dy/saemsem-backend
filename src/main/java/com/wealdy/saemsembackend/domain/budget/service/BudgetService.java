@@ -5,6 +5,7 @@ import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FO
 
 import com.wealdy.saemsembackend.domain.budget.entity.Budget;
 import com.wealdy.saemsembackend.domain.budget.repository.BudgetRepository;
+import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetTotalProjection;
 import com.wealdy.saemsembackend.domain.budget.service.dto.BudgetSummaryDto;
 import com.wealdy.saemsembackend.domain.budget.service.dto.GetBudgetDto;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
@@ -14,10 +15,10 @@ import com.wealdy.saemsembackend.domain.user.entity.User;
 import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,9 +82,10 @@ public class BudgetService {
         findCategoryList();
 
         List<GetBudgetDto> budgetDtoList = new ArrayList<>();
-        Map<Long, Long> sumOfBudgetByUserMap = new HashMap<>();  // 유저별 예산 총합
-        budgetRepository.getSumOfBudgetGroupByUser(date)
-            .forEach(projection -> sumOfBudgetByUserMap.put(projection.getUser().getId(), projection.getSumOfBudget()));
+
+        // 유저별 예산 총합
+        Map<Long, Long> sumOfBudgetByUserMap = budgetRepository.getSumOfBudgetGroupByUser(date).stream()
+            .collect(Collectors.toMap(budget -> budget.getUser().getId(), BudgetTotalProjection::getSumOfBudget));
         int userCount = sumOfBudgetByUserMap.size();  // user 수
 
         long recommendAmountTotal = 0;  // 추천 예산의 총 합
