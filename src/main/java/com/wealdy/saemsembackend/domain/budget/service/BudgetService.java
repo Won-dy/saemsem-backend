@@ -5,7 +5,7 @@ import static com.wealdy.saemsembackend.domain.core.response.ResponseCode.NOT_FO
 
 import com.wealdy.saemsembackend.domain.budget.entity.Budget;
 import com.wealdy.saemsembackend.domain.budget.repository.BudgetRepository;
-import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetRecommendProjection;
+import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetTotalProjection;
 import com.wealdy.saemsembackend.domain.budget.service.dto.BudgetSummaryDto;
 import com.wealdy.saemsembackend.domain.budget.service.dto.GetBudgetDto;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
@@ -15,10 +15,10 @@ import com.wealdy.saemsembackend.domain.user.entity.User;
 import com.wealdy.saemsembackend.domain.user.repository.UserRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,8 +57,9 @@ public class BudgetService {
     @Transactional(readOnly = true)
     public List<GetBudgetDto> getBudgetList(LocalDate date, String loginId) {
         User user = findUser(loginId);
+        findCategoryList();
         return budgetRepository.findByDateAndUser(date, user).stream()
-            .map(projection -> GetBudgetDto.of(projection.getCategoryName(), projection.getAmount()))
+            .map(budget -> GetBudgetDto.of(budget.getCategory().getName(), budget.getAmount()))
             .toList();
     }
 
@@ -77,44 +78,46 @@ public class BudgetService {
      */
     @Transactional(readOnly = true)
     public List<GetBudgetDto> recommendBudget(long budgetTotal, LocalDate date, String loginId) {
-        checkUser(loginId);
+        checkExistUser(loginId);
+        findCategoryList();
 
         List<GetBudgetDto> budgetDtoList = new ArrayList<>();
-        Map<Long, Long> sumOfBudgetByUserMap = new HashMap<>();  // 유저별 예산 총합
-        budgetRepository.getSumOfBudgetGroupByUser(date)
-            .forEach(projection -> sumOfBudgetByUserMap.put(projection.getUser().getId(), projection.getSumOfBudget()));
-        int userCnt = sumOfBudgetByUserMap.size();  // user 수
+
+        // 유저별 예산 총합
+        Map<Long, Long> sumOfBudgetByUserMap = budgetRepository.getSumOfBudgetGroupByUser(date).stream()
+            .collect(Collectors.toMap(budget -> budget.getUser().getId(), BudgetTotalProjection::getSumOfBudget));
+        int userCount = sumOfBudgetByUserMap.size();  // user 수
 
         long recommendAmountTotal = 0;  // 추천 예산의 총 합
         int countForCategory = 0;  // 현재 카테고리로 설정된 예산 개수 카운트
-        double ratioSum = 0;  // 카테고리 별 예산 비율 합계
+        long ratioSum = 0;  // 카테고리 별 예산 비율 합계
         long etcRatioSum = 0;  // 기타로 제공 될 카테고리 비율의 합
 
         // 카테고리 별 유저들의 예산 목록
-        List<BudgetRecommendProjection> budgetList = budgetRepository.findByDate(date);
-        for (BudgetRecommendProjection budget : budgetList) {
+        List<Budget> budgetList = budgetRepository.findByDate(date);
+        for (Budget budget : budgetList) {
             countForCategory++;
 
-            String categoryName = budget.getCategoryName();
+            String categoryName = budget.getCategory().getName();
 
             // 카테고리 별 유저들이 설정한 예산 비율
-            double categoryAmount = budget.getAmount();
-            double totalAmount = sumOfBudgetByUserMap.get(budget.getUserId());
-            double ratio = categoryAmount * 100 / totalAmount;
+            long categoryAmount = budget.getAmount();
+            long totalAmount = sumOfBudgetByUserMap.get(budget.getUser().getId());
+            long ratio = categoryAmount * 100 / totalAmount;
             ratioSum += ratio;
 
             // 해당 카테고리의 예산이 아직 존재하면 계속 확인
-            if (countForCategory != userCnt) {
+            if (countForCategory != userCount) {
                 continue;
             }
 
             // 해당 카테고리의 예산을 모두 확인했다면
             // 평균 비율 및 추천 금액 계산
-            long avgRatio = Math.round(ratioSum / (double) userCnt);
-            double amount = budgetTotal * avgRatio / 100.0;
+            long avgRatio = ratioSum / userCount;
+            long amount = budgetTotal * avgRatio / 100;
             long recommendAmount = Math.round(amount);
 
-            // 10% 미만인 카테고리의또는 기타 카테고리
+            // 10% 미만인 카테고리 또는 기타 카테고리
             if (avgRatio < MAX_RATIO || categoryName.equals("기타")) {
                 etcRatioSum += avgRatio;  // 기타로 제공 될 카테고리 비율을 합하기
             } else {
@@ -146,8 +149,15 @@ public class BudgetService {
             .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
     }
 
-    private void checkUser(String loginId) {
-        userRepository.findByLoginId(loginId)
-            .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER));
+    private void checkExistUser(String loginId) {
+        Optional<User> user = userRepository.findByLoginId(loginId);
+        if (user.isEmpty()) {
+            throw new NotFoundException(NOT_FOUND_USER);
+        }
+    }
+
+    // 1차 캐시에 Category Entity 를 저장하기 위한 메소드
+    private void findCategoryList() {
+        categoryRepository.findAll();
     }
 }

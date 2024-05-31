@@ -1,8 +1,6 @@
 package com.wealdy.saemsembackend.domain.budget.repository;
 
 import com.wealdy.saemsembackend.domain.budget.entity.Budget;
-import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetRecommendProjection;
-import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetSummaryProjection;
 import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetTotalProjection;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.user.entity.User;
@@ -17,13 +15,9 @@ public interface JpaBudgetRepository extends JpaRepository<Budget, Long> {
 
     Optional<Budget> findByDateAndCategoryAndUser(LocalDate date, Category category, User user);
 
-    @Query(value = "select c.name as categoryName, b.amount as amount from Category c "
-        + "left join Budget b on c.id = b.category.id and b.date = :date and b.user = :user")
-    List<BudgetSummaryProjection> findByDateAndUser(@Param("date") LocalDate date, @Param("user") User user);
+    List<Budget> findByDateAndUser(LocalDate date, User user);
 
-    @Query(value = "select b.user.id as userId, c.name as categoryName, b.amount as amount from Category c "
-        + "left join Budget b on c.id = b.category.id and b.date = :date")
-    List<BudgetRecommendProjection> findByDate(@Param("date") LocalDate date);
+    List<Budget> findByDate(LocalDate date);
 
     @Query(value = "select b.user as user, sum(b.amount) as sumOfBudget from Budget b "
         + "where b.date = :date group by b.user")

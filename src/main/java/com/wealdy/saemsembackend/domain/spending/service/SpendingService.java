@@ -8,7 +8,6 @@ import com.wealdy.saemsembackend.domain.budget.repository.BudgetRepository;
 import com.wealdy.saemsembackend.domain.budget.repository.projection.BudgetTotalProjection;
 import com.wealdy.saemsembackend.domain.category.entity.Category;
 import com.wealdy.saemsembackend.domain.category.repository.CategoryRepository;
-import com.wealdy.saemsembackend.domain.category.service.dto.GetCategoryDto;
 import com.wealdy.saemsembackend.domain.core.enums.SpendingMessage;
 import com.wealdy.saemsembackend.domain.core.enums.YnColumn;
 import com.wealdy.saemsembackend.domain.core.exception.NotFoundException;
@@ -320,12 +319,8 @@ public class SpendingService {
         // 지난 달 사용 금액
         long usedAmountInLastMonth =
             spendingRepository.getSumOfAmountByDateAndUser(getStartDateTime(firstDayOfLastMonth), getEndDateTime(lastMonth), user);
-        // 0원이면 이번 달 사용 금액을 % 로 표시하므로 100으로 치환한다.
-        if (usedAmountInLastMonth == 0) {
-            usedAmountInLastMonth = 100;
-        }
 
-        return usedAmountInThisMonth * 100 / usedAmountInLastMonth;
+        return calculateRate(usedAmountInLastMonth, usedAmountInThisMonth);
     }
 
     /*
@@ -349,11 +344,7 @@ public class SpendingService {
         for (int i = 0; i < usedAmountByCategoryInThisMonth.size(); i++) {
             long usedAmountInThisMonth = usedAmountByCategoryInThisMonth.get(i).getUsedAmount();
             long usedAmountInLastMonth = usedAmountByCategoryInLastMonth.get(i).getUsedAmount();
-            // 0원이면 이번 달 사용 금액을 % 로 표시하므로 100으로 치환한다.
-            if (usedAmountInLastMonth == 0) {
-                usedAmountInLastMonth = 100;
-            }
-            long spendingRate = usedAmountInThisMonth * 100 / usedAmountInLastMonth;
+            long spendingRate = calculateRate(usedAmountInLastMonth, usedAmountInThisMonth);
 
             monthlyCategorySpendingRate.add(
                 GetSpendingMonthlyByCategoryDto.of(usedAmountByCategoryInThisMonth.get(i).getCategory().getName(), spendingRate + "%")
@@ -371,12 +362,8 @@ public class SpendingService {
         long usedAmountToday = spendingRepository.getSumOfAmountByDateAndUser(getStartDateTime(today), getEndDateTime(today), user);
         // 지난 요일 사용 금액
         long usedAmountInLastWeeks = spendingRepository.getSumOfAmountByDateAndUser(getStartDateTime(lastWeek), getEndDateTime(lastWeek), user);
-        // 0원이면 오늘 사용 금액을 % 로 표시하므로 100으로 치환한다.
-        if (usedAmountInLastWeeks == 0) {
-            usedAmountInLastWeeks = 100;
-        }
 
-        return usedAmountToday * 100 / usedAmountInLastWeeks;
+        return calculateRate(usedAmountInLastWeeks, usedAmountToday);
     }
 
     /*
@@ -412,8 +399,8 @@ public class SpendingService {
             long spendingRate = usedAmount * 100 / budgetTotal.getSumOfBudget();
             rateSum += spendingRate;
         }
-        int userCnt = usersBudgetTotal.size();
-        long rateAverage = rateSum / (userCnt - 1);
+        int userCount = usersBudgetTotal.size();
+        long rateAverage = rateSum / (userCount - 1);
 
         return mySpendingRate * 100 / rateAverage;
     }
@@ -443,12 +430,8 @@ public class SpendingService {
 
         // 카테고리 목록을 조회하여 카테고리명=금액 map 을 만든다.
         // -> 0원 쓴 카테고리도 조회 결과로 보여주기 위해서.
-        List<GetCategoryDto> categoryList = categoryRepository.findAll().stream()
-            .map(GetCategoryDto::from)
-            .toList();
-
-        Map<String, Long> map = categoryList.stream()
-            .collect(Collectors.toMap(GetCategoryDto::getName, categoryDto -> 0L));
+        Map<String, Long> amountByCategory = categoryRepository.findAll().stream()
+            .collect(Collectors.toMap(Category::getName, category1 -> 0L));
 
         long spendingTotal = 0;
         for (GetSpendingDto spending : spendingList) {
@@ -457,12 +440,12 @@ public class SpendingService {
             }
 
             spendingTotal += spending.getAmount();  // 지출 합계
-            map.replace(spending.getCategoryName(), map.get(spending.getCategoryName()) + spending.getAmount());  // 카테고리별 지출합계
+            amountByCategory.merge(spending.getCategoryName(), spending.getAmount(), (Long::sum));  // 카테고리별 지출합계
         }
 
         // map to List<GetSpendingSummaryDto>
         List<GetSpendingSummaryDto> spendingTotalByCategory = new ArrayList<>();
-        for (Entry<String, Long> entry : map.entrySet()) {
+        for (Entry<String, Long> entry : amountByCategory.entrySet()) {
             spendingTotalByCategory.add(GetSpendingSummaryDto.of(entry.getKey(), entry.getValue()));
         }
 
@@ -565,5 +548,13 @@ public class SpendingService {
     private Category findCategory(String name) {
         return categoryRepository.findByName(name)
             .orElseThrow(() -> new NotFoundException(NOT_FOUND_CATEGORY));
+    }
+
+    // 비율 구하기
+    private long calculateRate(long previousAmount, long currentAmount) {
+        if (previousAmount == 0) {
+            return currentAmount;
+        }
+        return currentAmount * 100 / previousAmount;
     }
 }
