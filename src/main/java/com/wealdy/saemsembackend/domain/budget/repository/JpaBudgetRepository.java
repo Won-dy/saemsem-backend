@@ -15,8 +15,10 @@ public interface JpaBudgetRepository extends JpaRepository<Budget, Long> {
 
     Optional<Budget> findByDateAndCategoryAndUser(LocalDate date, Category category, User user);
 
+    @Query(value = "select b from Budget b join fetch b.category where b.date = :date and b.user = :user")
     List<Budget> findByDateAndUser(LocalDate date, User user);
 
+    @Query(value = "select b from Budget b join fetch b.category where b.date = :date")
     List<Budget> findByDate(LocalDate date);
 
     @Query(value = "select b.user as user, sum(b.amount) as sumOfBudget from Budget b "
