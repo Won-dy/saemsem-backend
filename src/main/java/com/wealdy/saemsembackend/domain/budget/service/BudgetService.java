@@ -57,7 +57,6 @@ public class BudgetService {
     @Transactional(readOnly = true)
     public List<GetBudgetDto> getBudgetList(LocalDate date, String loginId) {
         User user = findUser(loginId);
-        findCategoryList();
         return budgetRepository.findByDateAndUser(date, user).stream()
             .map(budget -> GetBudgetDto.of(budget.getCategory().getName(), budget.getAmount()))
             .toList();
@@ -79,7 +78,6 @@ public class BudgetService {
     @Transactional(readOnly = true)
     public List<GetBudgetDto> recommendBudget(long budgetTotal, LocalDate date, String loginId) {
         checkExistUser(loginId);
-        findCategoryList();
 
         List<GetBudgetDto> budgetDtoList = new ArrayList<>();
 
@@ -154,10 +152,5 @@ public class BudgetService {
         if (user.isEmpty()) {
             throw new NotFoundException(NOT_FOUND_USER);
         }
-    }
-
-    // 1차 캐시에 Category Entity 를 저장하기 위한 메소드
-    private void findCategoryList() {
-        categoryRepository.findAll();
     }
 }
